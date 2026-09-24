@@ -12,18 +12,8 @@ export interface IRetrieveRepository {
 
 export interface IRetrieveOutput {
   _id: string
-  code: string
   name: string
-  age: number
-  gender: string
   notes: string
-  composite_unique_1: string
-  composite_unique_2: string
-  optional_unique: string
-  optional_composite_unique_1: string
-  optional_composite_unique_2: string
-  xxx_composite_unique_1: string
-  xxx_composite_unique_2: string
   is_archived: boolean
   created_at: Date
   created_by: IAuthUser

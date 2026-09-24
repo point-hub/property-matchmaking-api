@@ -68,7 +68,7 @@ export class DeleteUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
       operation_id: this.deps.auditLogService.generateOperationId(),
       entity_type: collectionName,
       entity_id: input.filter._id,
-      entity_ref: `[${retrieveResponse.code}] ${retrieveResponse.name}`,
+      entity_ref: retrieveResponse.name!,
       actor_type: 'user',
       actor_id: input.authUser._id,
       actor_name: input.authUser.username,

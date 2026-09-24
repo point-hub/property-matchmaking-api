@@ -13,61 +13,21 @@ import { collectionName } from './entity';
 export const schema: ISchema[] = [
   {
     collection: collectionName,
-    unique: [['code'], ['name'], ['composite_unique_1', 'composite_unique_2']],
-    uniqueIfExists: [['optional_unique'], ['optional_composite_unique_1', 'optional_composite_unique_2'], ['xxx_composite_unique_1', 'xxx_composite_unique_2']],
+    unique: [['name']],
+    uniqueIfExists: [[]],
     indexes: [],
     schema: {
       bsonType: 'object',
-      required: ['code', 'name', 'gender', 'composite_unique_1', 'composite_unique_2'],
+      required: ['name'],
       // additionalProperties: false,
       properties: {
         _id: {
           bsonType: 'objectId',
           description: 'Unique ID for the document.',
         },
-        code: {
-          bsonType: 'string',
-          description: 'The code of the land title entity.',
-        },
         name: {
           bsonType: 'string',
           description: 'The name of the land title entity.',
-        },
-        composite_unique_1: {
-          bsonType: 'string',
-          description: 'The composite_unique_1 of the land title entity.',
-        },
-        composite_unique_2: {
-          bsonType: 'string',
-          description: 'The composite_unique_2 of the land title entity.',
-        },
-        optional_unique: {
-          bsonType: 'string',
-          description: 'The optional_unique of the land title entity.',
-        },
-        optional_composite_unique_1: {
-          bsonType: 'string',
-          description: 'The optional_composite_unique_1 of the land title entity.',
-        },
-        optional_composite_unique_2: {
-          bsonType: 'string',
-          description: 'The optional_composite_unique_2 of the land title entity.',
-        },
-        xxx_composite_unique_1: {
-          bsonType: 'string',
-          description: 'The xxx_composite_unique_1 of the land title entity.',
-        },
-        xxx_composite_unique_2: {
-          bsonType: 'string',
-          description: 'The xxx_composite_unique_2 of the land title entity.',
-        },
-        age: {
-          bsonType: 'number',
-          description: 'The age value associated with the land title entity.',
-        },
-        gender: {
-          bsonType: 'string',
-          description: 'The gender associated with the land title entity.',
         },
         notes: {
           bsonType: 'string',

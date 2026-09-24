@@ -19,18 +19,8 @@ export interface IInput {
     _id: string
   }
   data?: {
-    code?: string
     name?: string
-    age?: number
-    gender?: string
     notes?: string
-    composite_unique_1?: string
-    composite_unique_2?: string
-    optional_unique?: string
-    optional_composite_unique_1?: string
-    optional_composite_unique_2?: string
-    xxx_composite_unique_1?: string
-    xxx_composite_unique_2?: string
     update_reason?: string
     is_archived?: boolean
   }
@@ -57,12 +47,7 @@ export interface ISuccessData {
  * - Check whether the user is authorized to perform this action
  * - Check if the record exists
  * - Normalizes data (trim).
- * - Validate uniqueness: single unique code field.
  * - Validate uniqueness: single unique name field.
- * - Validate uniqueness: composite unique fields.
- * - Validate uniqueness: optional single unique field (ignore undefined values).
- * - Validate uniqueness: optional composite unique fields (ignore undefined values).
- * - Validate uniqueness: error attribute remapping.
  * - Reject update when no fields have changed
  * - Save the data to the database.
  * - Create an audit log entry for this operation.
@@ -85,30 +70,10 @@ export class UpdateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
 
     // Normalizes data (trim).
     const landTitleEntity = new LandTitleEntity({
-      code: input.data?.code,
       name: input.data?.name,
-      age: input.data?.age,
-      gender: input.data?.gender,
       notes: input.data?.notes,
-      composite_unique_1: input.data?.composite_unique_1,
-      composite_unique_2: input.data?.composite_unique_2,
-      optional_unique: input.data?.optional_unique,
-      optional_composite_unique_1: input.data?.optional_composite_unique_1,
-      optional_composite_unique_2: input.data?.optional_composite_unique_2,
-      xxx_composite_unique_1: input.data?.xxx_composite_unique_1,
-      xxx_composite_unique_2: input.data?.xxx_composite_unique_2,
       is_archived: input.data?.is_archived,
     });
-
-    // Validate uniqueness: single unique code field.
-    const uniqueCodeErrors = await this.deps.uniqueValidationService.validate(
-      collectionName,
-      { code: input.data?.code },
-      { except: { _id: input.filter._id } },
-    );
-    if (uniqueCodeErrors) {
-      return this.fail({ code: 422, message: 'Validation failed due to duplicate values.', errors: uniqueCodeErrors });
-    }
 
     // Validate uniqueness: single unique name field.
     const uniqueNameErrors = await this.deps.uniqueValidationService.validate(
@@ -118,68 +83,6 @@ export class UpdateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     );
     if (uniqueNameErrors) {
       return this.fail({ code: 422, message: 'Validation failed due to duplicate values.', errors: uniqueNameErrors });
-    }
-
-    // Validate uniqueness: composite unique fields.
-    const errors2 = await this.deps.uniqueValidationService.validate(
-      collectionName,
-      {
-        composite_unique_1: input.data?.composite_unique_1,
-        composite_unique_2: input.data?.composite_unique_2,
-      },
-      { except: { _id: input.filter._id } },
-    );
-    if (errors2) {
-      return this.fail({ code: 422, message: 'Validation failed due to duplicate values.', errors: errors2 });
-    }
-
-    // Validate uniqueness: optional single unique field (ignore undefined values).
-    const errors3 = await this.deps.uniqueValidationService.validate(
-      collectionName,
-      { optional_unique: input.data?.optional_unique },
-      {
-        except: { _id: input.filter._id },
-        ignoreUndefined: true,
-      },
-    );
-    if (errors3) {
-      return this.fail({ code: 422, message: 'Validation failed due to duplicate values.', errors: errors3 });
-    }
-
-    // Validate uniqueness: optional composite unique fields (ignore undefined values).
-    const errors4 = await this.deps.uniqueValidationService.validate(
-      collectionName,
-      {
-        optional_composite_unique_1: input.data?.optional_composite_unique_1,
-        optional_composite_unique_2: input.data?.optional_composite_unique_2,
-      },
-      {
-        except: { _id: input.filter._id },
-        ignoreUndefined: true,
-      },
-    );
-    if (errors4) {
-      return this.fail({ code: 422, message: 'Validation failed due to duplicate values.', errors: errors4 });
-    }
-
-    // Validate uniqueness: error attribute remapping.
-    const errors5 = await this.deps.uniqueValidationService.validate(
-      collectionName,
-      {
-        xxx_composite_unique_1: input.data?.xxx_composite_unique_1,
-        xxx_composite_unique_2: input.data?.xxx_composite_unique_2,
-      },
-      {
-        except: { _id: input.filter._id },
-        ignoreUndefined: true,
-        replaceErrorAttribute: {
-          xxx_composite_unique_1: 'composite_unique_1',
-          xxx_composite_unique_2: 'composite_unique_2',
-        },
-      },
-    );
-    if (errors5) {
-      return this.fail({ code: 422, message: 'Validation failed due to duplicate values.', errors: errors5 });
     }
 
     // Reject update when no fields have changed
@@ -199,7 +102,7 @@ export class UpdateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
       operation_id: this.deps.auditLogService.generateOperationId(),
       entity_type: collectionName,
       entity_id: input.filter._id,
-      entity_ref: `[${retrieveResponse.code}] ${retrieveResponse.name}`,
+      entity_ref: retrieveResponse.name!,
       actor_type: 'user',
       actor_id: input.authUser._id,
       actor_name: input.authUser.username,
