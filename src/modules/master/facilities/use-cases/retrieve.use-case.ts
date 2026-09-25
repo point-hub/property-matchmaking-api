@@ -19,18 +19,8 @@ export interface IDeps {
 
 export interface ISuccessData {
   _id: string
-  code: string
   name: string
-  age?: number
-  gender?: string
   notes?: string
-  composite_unique_1: string
-  composite_unique_2: string
-  optional_unique?: string
-  optional_composite_unique_1?: string
-  optional_composite_unique_2?: string
-  xxx_composite_unique_1?: string
-  xxx_composite_unique_2?: string
   is_archived: boolean
   created_at: Date
   created_by: IAuthUser
@@ -64,18 +54,8 @@ export class RetrieveUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     // Return a success response.
     return this.success({
       _id: response._id,
-      code: response.code,
       name: response.name,
-      age: response.age,
-      gender: response.gender,
       notes: response.notes,
-      composite_unique_1: response.composite_unique_1,
-      composite_unique_2: response.composite_unique_2,
-      optional_unique: response.optional_unique,
-      optional_composite_unique_1: response.optional_composite_unique_1,
-      optional_composite_unique_2: response.optional_composite_unique_2,
-      xxx_composite_unique_1: response.xxx_composite_unique_1,
-      xxx_composite_unique_2: response.xxx_composite_unique_2,
       is_archived: response.is_archived,
       created_at: response.created_at,
       created_by: {

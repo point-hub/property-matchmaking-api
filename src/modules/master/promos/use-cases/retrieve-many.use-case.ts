@@ -63,18 +63,8 @@ export class RetrieveManyUseCase extends BaseUseCase<IInput, IDeps, ISuccessData
       data: response.data.map(item => {
         const mapped = {
           _id: item._id,
-          code: item.code,
           name: item.name,
-          age: item.age,
-          gender: item.gender,
           notes: item.notes,
-          composite_unique_1: item.composite_unique_1,
-          composite_unique_2: item.composite_unique_2,
-          optional_unique: item.optional_unique,
-          optional_composite_unique_1: item.optional_composite_unique_1,
-          optional_composite_unique_2: item.optional_composite_unique_2,
-          xxx_composite_unique_1: item.xxx_composite_unique_1,
-          xxx_composite_unique_2: item.xxx_composite_unique_2,
           is_archived: item.is_archived,
           created_at: item.created_at,
           created_by: {

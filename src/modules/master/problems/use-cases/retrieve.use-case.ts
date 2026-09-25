@@ -55,18 +55,8 @@ export class RetrieveUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     // Return a success response.
     return this.success({
       _id: response._id,
-      code: response.code,
       name: response.name,
-      age: response.age,
-      gender: response.gender,
       notes: response.notes,
-      composite_unique_1: response.composite_unique_1,
-      composite_unique_2: response.composite_unique_2,
-      optional_unique: response.optional_unique,
-      optional_composite_unique_1: response.optional_composite_unique_1,
-      optional_composite_unique_2: response.optional_composite_unique_2,
-      xxx_composite_unique_1: response.xxx_composite_unique_1,
-      xxx_composite_unique_2: response.xxx_composite_unique_2,
       is_archived: response.is_archived,
       created_at: response.created_at,
       created_by: {

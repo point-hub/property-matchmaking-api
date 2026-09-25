@@ -53,11 +53,7 @@ describe('create an promo', async () => {
 
   it('E.2. fails when the user is not authorized', async () => {
     const data: IPromo = {
-      code: 'EXAMPLE/' + faker.number.int({ min: 1, max: 99999 }).toString().padStart(5, '0'),
       name: faker.person.fullName(),
-      gender: faker.person.sex(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -89,11 +85,7 @@ describe('create an promo', async () => {
     expect(response.body.status).toStrictEqual('Unprocessable Entity');
     expect(response.body.message).toStrictEqual('Validation failed, Please check the highlighted fields.');
     expect(response.body.errors).toStrictEqual({
-      code: ['The code field is required.'],
       name: ['The name field is required.'],
-      gender: ['The gender field is required.'],
-      composite_unique_1: ['The composite_unique_1 field is required.'],
-      composite_unique_2: ['The composite_unique_2 field is required.'],
     });
   });
 
@@ -105,11 +97,7 @@ describe('create an promo', async () => {
     await promoFactory.create();
 
     const data: IPromo = {
-      code: 'EXAMPLE/' + faker.number.int({ min: 1, max: 99999 }).toString().padStart(5, '0'),
       name: nameDuplicate,
-      gender: faker.person.sex(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -128,152 +116,9 @@ describe('create an promo', async () => {
     });
   });
 
-  it('E.4.2. fails when a composite unique database record already exists', async () => {
-    const compositeDuplicate1 = faker.person.fullName();
-    const compositeDuplicate2 = faker.person.fullName();
-
-    const promoFactory = new PromoFactory(DatabaseTestUtil.dbConnection);
-    promoFactory.state({ composite_unique_1: compositeDuplicate1, composite_unique_2: compositeDuplicate2 });
-    await promoFactory.create();
-
-    const data: IPromo = {
-      code: 'EXAMPLE/' + faker.number.int({ min: 1, max: 99999 }).toString().padStart(5, '0'),
-      name: faker.person.fullName(),
-      gender: faker.person.sex(),
-      composite_unique_1: compositeDuplicate1,
-      composite_unique_2: compositeDuplicate2,
-    };
-
-    const response = await request(app)
-      .post('/v1/master/promos')
-      .set('Authorization', `Bearer ${authorizedUser.accessToken}`)
-      .send(data);
-
-    // expect http response
-    expect(response.statusCode).toEqual(422);
-
-    // expect response json
-    expect(response.body.code).toStrictEqual(422);
-    expect(response.body.message).toStrictEqual('Validation failed due to duplicate values.');
-    expect(response.body.errors).toStrictEqual({
-      'composite_unique_1': ['The combination of composite_unique_1, composite_unique_2 field must be unique.'],
-      'composite_unique_2': ['The combination of composite_unique_1, composite_unique_2 field must be unique.'],
-    });
-  });
-
-  it('E.4.3. fails when validating unique database fields with undefined values', async () => {
-    const optionalDuplicate = faker.person.fullName();
-
-    const promoFactory = new PromoFactory(DatabaseTestUtil.dbConnection);
-    promoFactory.state({ optional_unique: optionalDuplicate });
-    await promoFactory.create();
-
-    const data: IPromo = {
-      code: 'EXAMPLE/' + faker.number.int({ min: 1, max: 99999 }).toString().padStart(5, '0'),
-      name: faker.person.fullName(),
-      gender: faker.person.sex(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
-      optional_unique: optionalDuplicate,
-    };
-
-    const response = await request(app)
-      .post('/v1/master/promos')
-      .set('Authorization', `Bearer ${authorizedUser.accessToken}`)
-      .send(data);
-
-    // expect http response
-    expect(response.statusCode).toEqual(422);
-
-    // expect response json
-    expect(response.body.code).toStrictEqual(422);
-    expect(response.body.message).toStrictEqual('Validation failed due to duplicate values.');
-    expect(response.body.errors).toStrictEqual({
-      'optional_unique': ['The optional_unique field must be unique.'],
-    });
-  });
-
-  it('E.4.4. fails when validating composite unique database fields with undefined values', async () => {
-    const compositeDuplicate1 = faker.person.fullName();
-    const compositeDuplicate2 = faker.person.fullName();
-
-    const promoFactory = new PromoFactory(DatabaseTestUtil.dbConnection);
-    promoFactory.state({ optional_composite_unique_1: compositeDuplicate1, optional_composite_unique_2: compositeDuplicate2 });
-    await promoFactory.create();
-
-    const data: IPromo = {
-      code: 'EXAMPLE/' + faker.number.int({ min: 1, max: 99999 }).toString().padStart(5, '0'),
-      name: faker.person.fullName(),
-      gender: faker.person.sex(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
-      optional_composite_unique_1: compositeDuplicate1,
-      optional_composite_unique_2: compositeDuplicate2,
-    };
-
-    const response = await request(app)
-      .post('/v1/master/promos')
-      .set('Authorization', `Bearer ${authorizedUser.accessToken}`)
-      .send(data);
-
-    // expect http response
-    expect(response.statusCode).toEqual(422);
-
-    // expect response json
-    expect(response.body.code).toStrictEqual(422);
-    expect(response.body.message).toStrictEqual('Validation failed due to duplicate values.');
-    expect(response.body.errors).toStrictEqual({
-      'optional_composite_unique_1': ['The combination of optional_composite_unique_1, optional_composite_unique_2 field must be unique.'],
-      'optional_composite_unique_2': ['The combination of optional_composite_unique_1, optional_composite_unique_2 field must be unique.'],
-    });
-  });
-
-  it('E.4.5. fails with a custom error field for unique database validation', async () => {
-    const compositeDuplicate1 = faker.person.fullName();
-    const compositeDuplicate2 = faker.person.fullName();
-
-    const promoFactory = new PromoFactory(DatabaseTestUtil.dbConnection);
-    promoFactory.state({ xxx_composite_unique_1: compositeDuplicate1, xxx_composite_unique_2: compositeDuplicate2 });
-    await promoFactory.create();
-
-    const data: IPromo = {
-      code: 'EXAMPLE/' + faker.number.int({ min: 1, max: 99999 }).toString().padStart(5, '0'),
-      name: faker.person.fullName(),
-      gender: faker.person.sex(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
-      xxx_composite_unique_1: compositeDuplicate1,
-      xxx_composite_unique_2: compositeDuplicate2,
-    };
-
-    const response = await request(app)
-      .post('/v1/master/promos')
-      .set('Authorization', `Bearer ${authorizedUser.accessToken}`)
-      .send(data);
-
-    // expect http response
-    expect(response.statusCode).toEqual(422);
-
-    // expect response json
-    expect(response.body.code).toStrictEqual(422);
-    expect(response.body.message).toStrictEqual('Validation failed due to duplicate values.');
-    expect(response.body.errors).toStrictEqual({
-      'composite_unique_1': ['The combination of composite_unique_1, composite_unique_2 field must be unique.'],
-      'composite_unique_2': ['The combination of composite_unique_1, composite_unique_2 field must be unique.'],
-    });
-  });
-
   it('S.1. succeeds', async () => {
     const data = {
-      code: 'EXAMPLE/' + faker.number.int({ min: 1, max: 99999 }).toString().padStart(5, '0'),
       name: faker.person.fullName(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
-      age: faker.number.int({ min: 17, max: 100 }),
-      gender: faker.person.sex(),
-      optional_unique: faker.person.fullName(),
-      optional_composite_unique_1: faker.person.fullName(),
-      optional_composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -292,13 +137,6 @@ describe('create an promo', async () => {
 
     expect(promoRecord?._id).toStrictEqual(response.body.inserted_id);
     expect(promoRecord?.name).toStrictEqual(data.name);
-    expect(promoRecord?.composite_unique_1).toStrictEqual(data.composite_unique_1);
-    expect(promoRecord?.composite_unique_2).toStrictEqual(data.composite_unique_2);
-    expect(promoRecord?.age).toStrictEqual(data.age);
-    expect(promoRecord?.gender).toStrictEqual(data.gender);
-    expect(promoRecord?.optional_unique).toStrictEqual(data.optional_unique);
-    expect(promoRecord?.optional_composite_unique_1).toStrictEqual(data.optional_composite_unique_1);
-    expect(promoRecord?.optional_composite_unique_2).toStrictEqual(data.optional_composite_unique_2);
     expect(isValidDate(promoRecord?.created_at)).toBeTruthy();
 
     // expect recorded data - the counter value to be incremented
@@ -310,11 +148,7 @@ describe('create an promo', async () => {
 
   it('S.2. succeeds with only required fields', async () => {
     const data = {
-      code: 'EXAMPLE/' + faker.number.int({ min: 1, max: 99999 }).toString().padStart(5, '0'),
       name: faker.person.fullName(),
-      gender: faker.person.sex(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -333,9 +167,6 @@ describe('create an promo', async () => {
 
     expect(promoRecord?._id).toStrictEqual(response.body.inserted_id);
     expect(promoRecord?.name).toStrictEqual(data.name);
-    expect(promoRecord?.gender).toStrictEqual(data.gender);
-    expect(promoRecord?.composite_unique_1).toStrictEqual(data.composite_unique_1);
-    expect(promoRecord?.composite_unique_2).toStrictEqual(data.composite_unique_2);
     expect(isValidDate(promoRecord?.created_at)).toBeTruthy();
 
     // expect recorded data - the counter value to be incremented

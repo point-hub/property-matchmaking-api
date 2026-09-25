@@ -52,9 +52,6 @@ describe('update an facility', async () => {
 
     const data: IFacility = {
       name: faker.person.fullName(),
-      gender: faker.person.sex(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -78,8 +75,6 @@ describe('update an facility', async () => {
       .set('Authorization', `Bearer ${authorizedUser.accessToken}`)
       .send({
         name: null,
-        composite_unique_1: null,
-        composite_unique_2: null,
       });
 
     // expect http response
@@ -91,8 +86,6 @@ describe('update an facility', async () => {
     expect(response.body.message).toStrictEqual('Validation failed, Please check the highlighted fields.');
     expect(response.body.errors).toStrictEqual({
       name: ['The name field is required.'],
-      composite_unique_1: ['The composite_unique_1 field is required.'],
-      composite_unique_2: ['The composite_unique_2 field is required.'],
     });
   });
 
@@ -109,9 +102,6 @@ describe('update an facility', async () => {
 
     const data: IFacility = {
       name: nameDuplicate,
-      gender: faker.person.sex(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -135,13 +125,6 @@ describe('update an facility', async () => {
 
     const updateData = {
       name: faker.person.fullName(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
-      age: faker.number.int({ min: 17, max: 100 }),
-      gender: faker.person.sex(),
-      optional_unique: faker.person.fullName(),
-      optional_composite_unique_1: faker.person.fullName(),
-      optional_composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -163,13 +146,6 @@ describe('update an facility', async () => {
     // expect recorded data
     const facilityRecord = await DatabaseTestUtil.retrieve<IFacility>('facilities', resultFacilityFactory.inserted_ids[0]);
     expect(facilityRecord?.name).toStrictEqual(updateData.name);
-    expect(facilityRecord?.composite_unique_1).toStrictEqual(updateData.composite_unique_1);
-    expect(facilityRecord?.composite_unique_2).toStrictEqual(updateData.composite_unique_2);
-    expect(facilityRecord?.age).toStrictEqual(updateData.age);
-    expect(facilityRecord?.gender).toStrictEqual(updateData.gender);
-    expect(facilityRecord?.optional_unique).toStrictEqual(updateData.optional_unique);
-    expect(facilityRecord?.optional_composite_unique_1).toStrictEqual(updateData.optional_composite_unique_1);
-    expect(facilityRecord?.optional_composite_unique_2).toStrictEqual(updateData.optional_composite_unique_2);
 
     // expect another data unmodified
     const unmodifiedFacilityRecord = await DatabaseTestUtil.retrieve<IFacility>('facilities', resultFacilityFactory.inserted_ids[1]);

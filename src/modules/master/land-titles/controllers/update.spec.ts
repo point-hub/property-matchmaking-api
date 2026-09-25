@@ -52,9 +52,6 @@ describe('update an land title', async () => {
 
     const data: ILandTitle = {
       name: faker.person.fullName(),
-      gender: faker.person.sex(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -78,8 +75,6 @@ describe('update an land title', async () => {
       .set('Authorization', `Bearer ${authorizedUser.accessToken}`)
       .send({
         name: null,
-        composite_unique_1: null,
-        composite_unique_2: null,
       });
 
     // expect http response
@@ -91,8 +86,6 @@ describe('update an land title', async () => {
     expect(response.body.message).toStrictEqual('Validation failed, Please check the highlighted fields.');
     expect(response.body.errors).toStrictEqual({
       name: ['The name field is required.'],
-      composite_unique_1: ['The composite_unique_1 field is required.'],
-      composite_unique_2: ['The composite_unique_2 field is required.'],
     });
   });
 
@@ -109,9 +102,6 @@ describe('update an land title', async () => {
 
     const data: ILandTitle = {
       name: nameDuplicate,
-      gender: faker.person.sex(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -135,13 +125,6 @@ describe('update an land title', async () => {
 
     const updateData = {
       name: faker.person.fullName(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
-      age: faker.number.int({ min: 17, max: 100 }),
-      gender: faker.person.sex(),
-      optional_unique: faker.person.fullName(),
-      optional_composite_unique_1: faker.person.fullName(),
-      optional_composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -163,13 +146,6 @@ describe('update an land title', async () => {
     // expect recorded data
     const landTitleRecord = await DatabaseTestUtil.retrieve<ILandTitle>('land_titles', resultLandTitleFactory.inserted_ids[0]);
     expect(landTitleRecord?.name).toStrictEqual(updateData.name);
-    expect(landTitleRecord?.composite_unique_1).toStrictEqual(updateData.composite_unique_1);
-    expect(landTitleRecord?.composite_unique_2).toStrictEqual(updateData.composite_unique_2);
-    expect(landTitleRecord?.age).toStrictEqual(updateData.age);
-    expect(landTitleRecord?.gender).toStrictEqual(updateData.gender);
-    expect(landTitleRecord?.optional_unique).toStrictEqual(updateData.optional_unique);
-    expect(landTitleRecord?.optional_composite_unique_1).toStrictEqual(updateData.optional_composite_unique_1);
-    expect(landTitleRecord?.optional_composite_unique_2).toStrictEqual(updateData.optional_composite_unique_2);
 
     // expect another data unmodified
     const unmodifiedLandTitleRecord = await DatabaseTestUtil.retrieve<ILandTitle>('land_titles', resultLandTitleFactory.inserted_ids[1]);

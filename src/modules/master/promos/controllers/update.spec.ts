@@ -52,9 +52,6 @@ describe('update an promo', async () => {
 
     const data: IPromo = {
       name: faker.person.fullName(),
-      gender: faker.person.sex(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -78,8 +75,6 @@ describe('update an promo', async () => {
       .set('Authorization', `Bearer ${authorizedUser.accessToken}`)
       .send({
         name: null,
-        composite_unique_1: null,
-        composite_unique_2: null,
       });
 
     // expect http response
@@ -91,8 +86,6 @@ describe('update an promo', async () => {
     expect(response.body.message).toStrictEqual('Validation failed, Please check the highlighted fields.');
     expect(response.body.errors).toStrictEqual({
       name: ['The name field is required.'],
-      composite_unique_1: ['The composite_unique_1 field is required.'],
-      composite_unique_2: ['The composite_unique_2 field is required.'],
     });
   });
 
@@ -109,9 +102,6 @@ describe('update an promo', async () => {
 
     const data: IPromo = {
       name: nameDuplicate,
-      gender: faker.person.sex(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -135,13 +125,6 @@ describe('update an promo', async () => {
 
     const updateData = {
       name: faker.person.fullName(),
-      composite_unique_1: faker.person.fullName(),
-      composite_unique_2: faker.person.fullName(),
-      age: faker.number.int({ min: 17, max: 100 }),
-      gender: faker.person.sex(),
-      optional_unique: faker.person.fullName(),
-      optional_composite_unique_1: faker.person.fullName(),
-      optional_composite_unique_2: faker.person.fullName(),
     };
 
     const response = await request(app)
@@ -163,13 +146,6 @@ describe('update an promo', async () => {
     // expect recorded data
     const promoRecord = await DatabaseTestUtil.retrieve<IPromo>('promos', resultPromoFactory.inserted_ids[0]);
     expect(promoRecord?.name).toStrictEqual(updateData.name);
-    expect(promoRecord?.composite_unique_1).toStrictEqual(updateData.composite_unique_1);
-    expect(promoRecord?.composite_unique_2).toStrictEqual(updateData.composite_unique_2);
-    expect(promoRecord?.age).toStrictEqual(updateData.age);
-    expect(promoRecord?.gender).toStrictEqual(updateData.gender);
-    expect(promoRecord?.optional_unique).toStrictEqual(updateData.optional_unique);
-    expect(promoRecord?.optional_composite_unique_1).toStrictEqual(updateData.optional_composite_unique_1);
-    expect(promoRecord?.optional_composite_unique_2).toStrictEqual(updateData.optional_composite_unique_2);
 
     // expect another data unmodified
     const unmodifiedPromoRecord = await DatabaseTestUtil.retrieve<IPromo>('promos', resultPromoFactory.inserted_ids[1]);
