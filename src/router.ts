@@ -8,6 +8,7 @@ import auditLogRouter from './modules/audit-logs/router';
 import counterRouter from './modules/counters/router';
 import healthRouter from './modules/health/router';
 import masterLandTitleRouter from './modules/master/land-titles/router';
+import masterFacilityRouter from './modules/master/facilities/router';
 import masterExampleRouter from './modules/master/examples/router';
 import masterPermissionRouter from './modules/master/permissions/router';
 import masterRoleRouter from './modules/master/roles/router';
@@ -38,6 +39,7 @@ export default async function (baseRouterInput: IBaseAppInput) {
   app.use('/v1/master/roles', await masterRoleRouter(baseRouterInput));
   app.use('/v1/master/examples', await masterExampleRouter(baseRouterInput));
   app.use('/v1/master/land-titles', await masterLandTitleRouter(baseRouterInput));
+  app.use('/v1/master/facilities', await masterFacilityRouter(baseRouterInput));
 
   /**
    * Rendered email templates
