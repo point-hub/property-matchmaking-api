@@ -13,6 +13,7 @@ export interface IRetrieveRepository {
 export interface IRetrieveOutput {
   _id: string
   name: string
+  description: string
   notes: string
   is_archived: boolean
   created_at: Date
@@ -40,6 +41,7 @@ export class RetrieveRepository implements IRetrieveRepository {
     return {
       _id: response.data[0]._id,
       name: response.data[0].name,
+      description: response.data[0].description,
       notes: response.data[0].notes,
       is_archived: response.data[0].is_archived,
       created_at: response.data[0].created_at,
@@ -95,6 +97,7 @@ export class RetrieveRepository implements IRetrieveRepository {
         $project: {
           _id: 1,
           name: 1,
+          description: 1,
           notes: 1,
           is_archived: 1,
           created_at: 1,

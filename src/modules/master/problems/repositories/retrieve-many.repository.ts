@@ -40,6 +40,7 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
         return {
           _id: item._id,
           name: item.name,
+          description: item.description,
           notes: item.notes,
           is_archived: item.is_archived,
           created_at: item.created_at,
@@ -68,6 +69,7 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
 
     // Filter specific field
     BaseMongoDBQueryFilters.addRegexFilter(filters, 'name', query?.['search.name']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'description', query?.['search.description']);
     BaseMongoDBQueryFilters.addRegexFilter(filters, 'notes', query?.['search.notes']);
 
     // Filter boolean
@@ -111,6 +113,7 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
         $project: {
           _id: 1,
           name: 1,
+          description: 1,
           notes: 1,
           is_archived: 1,
           created_at: 1,

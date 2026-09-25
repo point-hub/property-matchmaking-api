@@ -92,8 +92,6 @@ describe('retrieve an promo', async () => {
     // expect response json
     expect(response.body._id).toBeDefined();
     expect(response.body.name).toStrictEqual(promos.data[1].name);
-    expect(response.body.age).toStrictEqual(promos.data[1].age);
-    expect(response.body.gender).toStrictEqual(promos.data[1].gender);
     expect(isValidDate(response.body.created_at)).toBeTruthy();
   });
 });

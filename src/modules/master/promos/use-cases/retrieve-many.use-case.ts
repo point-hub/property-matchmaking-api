@@ -64,6 +64,7 @@ export class RetrieveManyUseCase extends BaseUseCase<IInput, IDeps, ISuccessData
         const mapped = {
           _id: item._id,
           name: item.name,
+          description: item.description,
           notes: item.notes,
           is_archived: item.is_archived,
           created_at: item.created_at,

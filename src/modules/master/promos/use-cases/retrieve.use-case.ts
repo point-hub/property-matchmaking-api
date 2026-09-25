@@ -56,6 +56,7 @@ export class RetrieveUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     return this.success({
       _id: response._id,
       name: response.name,
+      description: response.description,
       notes: response.notes,
       is_archived: response.is_archived,
       created_at: response.created_at,
