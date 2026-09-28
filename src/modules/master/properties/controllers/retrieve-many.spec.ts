@@ -7,10 +7,10 @@ import request from 'supertest';
 import { createApp } from '@/app';
 import { type IAuthUserWithTokenResponse, TestService } from '@/modules/_shared/services/test.service';
 
-import ExampleFactory from '../factory';
-import type { IExample } from '../interface';
+import PropertyFactory from '../factory';
+import type { IProperty } from '../interface';
 
-describe('retrieve all examples', async () => {
+describe('retrieve all properties', async () => {
   let app: Express;
   let authorizedUser: IAuthUserWithTokenResponse;
   let unauthorizedUser: IAuthUserWithTokenResponse;
@@ -24,7 +24,7 @@ describe('retrieve all examples', async () => {
 
     const testService = new TestService(DatabaseTestUtil.dbConnection);
     authorizedUser = await testService.createAuthUserAndGetAccessToken({
-      permissions: ['examples:read'],
+      permissions: ['properties:read'],
     });
     unauthorizedUser = await testService.createAuthUserAndGetAccessToken({
       permissions: [],
@@ -33,7 +33,7 @@ describe('retrieve all examples', async () => {
 
   it('E.1. fails when the user is not authenticated', async () => {
     const response = await request(app)
-      .get('/v1/master/examples')
+      .get('/v1/master/properties')
       .set('Authorization', 'Bearer');
 
     // expect http response
@@ -46,7 +46,7 @@ describe('retrieve all examples', async () => {
 
   it('E.2. fails when the user is not authorized', async () => {
     const response = await request(app)
-      .get('/v1/master/examples')
+      .get('/v1/master/properties')
       .set('Authorization', `Bearer ${unauthorizedUser.accessToken}`);
 
     // expect http response
@@ -58,13 +58,13 @@ describe('retrieve all examples', async () => {
   });
 
   it('S.1. succeeds', async () => {
-    const exampleFactory = new ExampleFactory(DatabaseTestUtil.dbConnection);
-    await exampleFactory.createMany(3);
+    const propertyFactory = new PropertyFactory(DatabaseTestUtil.dbConnection);
+    await propertyFactory.createMany(3);
 
-    const examples = await DatabaseTestUtil.retrieveMany<IExample>('examples');
+    const properties = await DatabaseTestUtil.retrieveMany<IProperty>('properties');
 
     const response = await request(app)
-      .get('/v1/master/examples')
+      .get('/v1/master/properties')
       .set('Authorization', `Bearer ${authorizedUser.accessToken}`);
 
     // expect http response
@@ -73,10 +73,10 @@ describe('retrieve all examples', async () => {
     // expect response json
     expect(response.body.data.length).toStrictEqual(3);
     expect(response.body.data[0]._id).toBeDefined();
-    expect(response.body.data[0].name).toStrictEqual(examples.data[0].name);
+    expect(response.body.data[0].name).toStrictEqual(properties.data[0].name);
     expect(isValidDate(response.body.data[0].created_at)).toBeTruthy();
-    expect(response.body.data[1].name).toStrictEqual(examples.data[1].name);
-    expect(response.body.data[2].name).toStrictEqual(examples.data[2].name);
+    expect(response.body.data[1].name).toStrictEqual(properties.data[1].name);
+    expect(response.body.data[2].name).toStrictEqual(properties.data[2].name);
 
     expect(response.body.pagination.page).toStrictEqual(1);
     expect(response.body.pagination.page_size).toStrictEqual(10);
@@ -85,17 +85,17 @@ describe('retrieve all examples', async () => {
   });
 
   it('S.2. succeeds in sorting data in ascending order', async () => {
-    const exampleFactory = new ExampleFactory(DatabaseTestUtil.dbConnection);
+    const propertyFactory = new PropertyFactory(DatabaseTestUtil.dbConnection);
     const data = [
       { name: 'John Doe' },
       { name: 'Charles' },
       { name: 'Jane' },
     ];
-    exampleFactory.sequence(data);
-    await exampleFactory.createMany(3);
+    propertyFactory.sequence(data);
+    await propertyFactory.createMany(3);
 
     const response = await request(app)
-      .get('/v1/master/examples')
+      .get('/v1/master/properties')
       .set('Authorization', `Bearer ${authorizedUser.accessToken}`)
       .query({
         sort: 'name',
@@ -117,17 +117,17 @@ describe('retrieve all examples', async () => {
   });
 
   it('S.3. succeeds in sorting data in descending order', async () => {
-    const exampleFactory = new ExampleFactory(DatabaseTestUtil.dbConnection);
+    const propertyFactory = new PropertyFactory(DatabaseTestUtil.dbConnection);
     const data = [
       { name: 'John Doe' },
       { name: 'Charles' },
       { name: 'Jane' },
     ];
-    exampleFactory.sequence(data);
-    await exampleFactory.createMany(3);
+    propertyFactory.sequence(data);
+    await propertyFactory.createMany(3);
 
     const response = await request(app)
-      .get('/v1/master/examples')
+      .get('/v1/master/properties')
       .set('Authorization', `Bearer ${authorizedUser.accessToken}`)
       .query({
         sort: '-name',
@@ -149,13 +149,13 @@ describe('retrieve all examples', async () => {
   });
 
   it('S.4. succeeds in navigating pagination', async () => {
-    const exampleFactory = new ExampleFactory(DatabaseTestUtil.dbConnection);
-    await exampleFactory.createMany(3);
+    const propertyFactory = new PropertyFactory(DatabaseTestUtil.dbConnection);
+    await propertyFactory.createMany(3);
 
-    const examples = await DatabaseTestUtil.retrieveMany<IExample>('examples');
+    const properties = await DatabaseTestUtil.retrieveMany<IProperty>('properties');
 
     const response = await request(app)
-      .get('/v1/master/examples')
+      .get('/v1/master/properties')
       .set('Authorization', `Bearer ${authorizedUser.accessToken}`)
       .query({
         page: 2,
@@ -167,7 +167,7 @@ describe('retrieve all examples', async () => {
 
     // expect response json
     expect(response.body.data.length).toStrictEqual(1);
-    expect(response.body.data[0].name).toStrictEqual(examples.data[2].name);
+    expect(response.body.data[0].name).toStrictEqual(properties.data[2].name);
 
     expect(response.body.pagination.page).toStrictEqual(2);
     expect(response.body.pagination.page_size).toStrictEqual(2);
@@ -176,13 +176,13 @@ describe('retrieve all examples', async () => {
   });
 
   it('S.5. succeeds in choosing fields', async () => {
-    const exampleFactory = new ExampleFactory(DatabaseTestUtil.dbConnection);
-    await exampleFactory.createMany(3);
+    const propertyFactory = new PropertyFactory(DatabaseTestUtil.dbConnection);
+    await propertyFactory.createMany(3);
 
-    const examples = await DatabaseTestUtil.retrieveMany<IExample>('examples');
+    const properties = await DatabaseTestUtil.retrieveMany<IProperty>('properties');
 
     const response = await request(app)
-      .get('/v1/master/examples')
+      .get('/v1/master/properties')
       .set('Authorization', `Bearer ${authorizedUser.accessToken}`)
       .query({
         fields: '_id,name',
@@ -196,9 +196,9 @@ describe('retrieve all examples', async () => {
     expect(response.body.data[0]._id).toBeDefined();
     expect(response.body.data[1]._id).toBeDefined();
     expect(response.body.data[2]._id).toBeDefined();
-    expect(response.body.data[0].name).toStrictEqual(examples.data[0].name);
-    expect(response.body.data[1].name).toStrictEqual(examples.data[1].name);
-    expect(response.body.data[2].name).toStrictEqual(examples.data[2].name);
+    expect(response.body.data[0].name).toStrictEqual(properties.data[0].name);
+    expect(response.body.data[1].name).toStrictEqual(properties.data[1].name);
+    expect(response.body.data[2].name).toStrictEqual(properties.data[2].name);
     expect(response.body.data[0].age).toBeUndefined();
     expect(response.body.data[1].age).toBeUndefined();
     expect(response.body.data[2].age).toBeUndefined();

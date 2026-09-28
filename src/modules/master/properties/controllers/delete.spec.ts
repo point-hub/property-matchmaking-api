@@ -6,10 +6,10 @@ import request from 'supertest';
 import { createApp } from '@/app';
 import { type IAuthUserWithTokenResponse, TestService } from '@/modules/_shared/services/test.service';
 
-import ExampleFactory from '../factory';
-import type { IExample } from '../interface';
+import PropertyFactory from '../factory';
+import type { IProperty } from '../interface';
 
-describe('delete an example', async () => {
+describe('delete an property', async () => {
   let app: Express;
   let authorizedUser: IAuthUserWithTokenResponse;
   let unauthorizedUser: IAuthUserWithTokenResponse;
@@ -23,7 +23,7 @@ describe('delete an example', async () => {
 
     const testService = new TestService(DatabaseTestUtil.dbConnection);
     authorizedUser = await testService.createAuthUserAndGetAccessToken({
-      permissions: ['examples:delete'],
+      permissions: ['properties:delete'],
     });
     unauthorizedUser = await testService.createAuthUserAndGetAccessToken({
       permissions: [],
@@ -31,11 +31,11 @@ describe('delete an example', async () => {
   });
 
   it('E.1. fails when the user is not authenticated', async () => {
-    const exampleFactory = new ExampleFactory(DatabaseTestUtil.dbConnection);
-    const resultExampleFactory = await exampleFactory.createMany(3);
+    const propertyFactory = new PropertyFactory(DatabaseTestUtil.dbConnection);
+    const resultPropertyFactory = await propertyFactory.createMany(3);
 
     const response = await request(app)
-      .delete(`/v1/master/examples/${resultExampleFactory.inserted_ids[0]}`)
+      .delete(`/v1/master/properties/${resultPropertyFactory.inserted_ids[0]}`)
       .set('Authorization', 'Bearer');
 
     // expect http response
@@ -46,16 +46,16 @@ describe('delete an example', async () => {
     expect(response.body.message).toStrictEqual('Authentication credentials is invalid.');
 
     // expect recorded data
-    const exampleRecords = await DatabaseTestUtil.retrieveMany<IExample>('examples');
-    expect(exampleRecords.data.length).toStrictEqual(3);
+    const propertyRecords = await DatabaseTestUtil.retrieveMany<IProperty>('properties');
+    expect(propertyRecords.data.length).toStrictEqual(3);
   });
 
   it('E.2. fails when the user is not authorized', async () => {
-    const exampleFactory = new ExampleFactory(DatabaseTestUtil.dbConnection);
-    const resultExampleFactory = await exampleFactory.createMany(3);
+    const propertyFactory = new PropertyFactory(DatabaseTestUtil.dbConnection);
+    const resultPropertyFactory = await propertyFactory.createMany(3);
 
     const response = await request(app)
-      .delete(`/v1/master/examples/${resultExampleFactory.inserted_ids[0]}`)
+      .delete(`/v1/master/properties/${resultPropertyFactory.inserted_ids[0]}`)
       .set('Authorization', `Bearer ${unauthorizedUser.accessToken}`)
       .send();
 
@@ -67,16 +67,16 @@ describe('delete an example', async () => {
     expect(response.body.message).toStrictEqual('You do not have permission to perform this action.');
 
     // expect recorded data
-    const exampleRecords = await DatabaseTestUtil.retrieveMany<IExample>('examples');
-    expect(exampleRecords.data.length).toStrictEqual(3);
+    const propertyRecords = await DatabaseTestUtil.retrieveMany<IProperty>('properties');
+    expect(propertyRecords.data.length).toStrictEqual(3);
   });
 
   it('S.1. succeeds', async () => {
-    const exampleFactory = new ExampleFactory(DatabaseTestUtil.dbConnection);
-    const resultExampleFactory = await exampleFactory.createMany(3);
+    const propertyFactory = new PropertyFactory(DatabaseTestUtil.dbConnection);
+    const resultPropertyFactory = await propertyFactory.createMany(3);
 
     const response = await request(app)
-      .delete(`/v1/master/examples/${resultExampleFactory.inserted_ids[1]}`)
+      .delete(`/v1/master/properties/${resultPropertyFactory.inserted_ids[1]}`)
       .set('Authorization', `Bearer ${authorizedUser.accessToken}`);
 
     // expect http response
@@ -86,10 +86,10 @@ describe('delete an example', async () => {
     expect(response.body).toStrictEqual({ deleted_count: 1 });
 
     // expect recorded data
-    const exampleRecord = await DatabaseTestUtil.retrieve<IExample>('examples', resultExampleFactory.inserted_ids[1]);
-    expect(exampleRecord).toBeNull();
+    const propertyRecord = await DatabaseTestUtil.retrieve<IProperty>('properties', resultPropertyFactory.inserted_ids[1]);
+    expect(propertyRecord).toBeNull();
 
-    const exampleRecords = await DatabaseTestUtil.retrieveMany<IExample>('examples');
-    expect(exampleRecords.data.length).toStrictEqual(2);
+    const propertyRecords = await DatabaseTestUtil.retrieveMany<IProperty>('properties');
+    expect(propertyRecords.data.length).toStrictEqual(2);
   });
 });

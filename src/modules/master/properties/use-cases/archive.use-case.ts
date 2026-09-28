@@ -6,7 +6,7 @@ import type { IAblyService } from '@/modules/ably/services/ably.service';
 import type { IAuditLogService } from '@/modules/audit-logs/services/audit-log.service';
 import type { IAuthUser } from '@/modules/master/users/interface';
 
-import { collectionName, ExampleEntity } from '../entity';
+import { collectionName, PropertyEntity } from '../entity';
 import type { IRetrieveRepository } from '../repositories/retrieve.repository';
 import type { IUpdateRepository } from '../repositories/update.repository';
 
@@ -36,7 +36,7 @@ export interface ISuccessData {
 }
 
 /**
- * Use case: Restore Example.
+ * Use case: Archive Property.
  *
  * Responsibilities:
  * - Check whether the user is authorized to perform this action
@@ -47,10 +47,10 @@ export interface ISuccessData {
  * - Publish realtime notification event to the recipient’s channel.
  * - Return a success response.
  */
-export class RestoreUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
+export class ArchiveUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
   async handle(input: IInput): Promise<IUseCaseOutputSuccess<ISuccessData> | IUseCaseOutputFailed> {
     // Check whether the user is authorized to perform this action
-    const isAuthorized = this.deps.authorizationService.hasAccess(input.authUser.role?.permissions, 'examples:update');
+    const isAuthorized = this.deps.authorizationService.hasAccess(input.authUser.role?.permissions, 'properties:update');
     if (!isAuthorized) {
       return this.fail({ code: 403, message: 'You do not have permission to perform this action.' });
     }
@@ -62,17 +62,17 @@ export class RestoreUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     }
 
     // Normalizes data (trim).
-    const exampleEntity = new ExampleEntity({
-      is_archived: null,
+    const propertyEntity = new PropertyEntity({
+      is_archived: true,
     });
 
     // Save the data to the database.
-    const response = await this.deps.updateRepository.handle(input.filter._id, exampleEntity.data);
+    const response = await this.deps.updateRepository.handle(input.filter._id, propertyEntity.data);
 
     // Create an audit log entry for this operation.
     const changes = this.deps.auditLogService.buildChanges(
       retrieveResponse,
-      this.deps.auditLogService.mergeDefined(retrieveResponse, exampleEntity.data),
+      this.deps.auditLogService.mergeDefined(retrieveResponse, propertyEntity.data),
     );
     const dataLog = {
       operation_id: this.deps.auditLogService.generateOperationId(),
@@ -82,8 +82,8 @@ export class RestoreUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
       actor_type: 'user',
       actor_id: input.authUser._id,
       actor_name: input.authUser.username,
-      action: 'restore',
-      module: 'examples',
+      action: 'archive',
+      module: 'properties',
       system_reason: 'update data',
       user_reason: input.data?.update_reason,
       changes: changes,
@@ -99,13 +99,13 @@ export class RestoreUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
 
     // Publish realtime notification event to the recipient’s channel.
     this.deps.ablyService.publish(`notifications:${input.authUser._id}`, 'logs:new', {
-      type: 'examples',
+      type: 'properties',
       actor_id: input.authUser._id,
       recipient_id: input.authUser._id,
       is_read: false,
       created_at: new Date(),
       entities: {
-        examples: input.filter._id,
+        properties: input.filter._id,
       },
       data: dataLog,
     });

@@ -3,27 +3,17 @@ import type { IDatabase, IPipeline } from '@point-hub/papi';
 import type { IAuthUser } from '@/modules/master/users/interface';
 
 import { collectionName } from '../entity';
-import type { IExample } from '../interface';
+import type { IProperty } from '../interface';
 
 export interface IRetrieveRepository {
   handle(_id: string): Promise<IRetrieveOutput | null>
-  raw(_id: string): Promise<IExample | null>
+  raw(_id: string): Promise<IProperty | null>
 }
 
 export interface IRetrieveOutput {
   _id: string
-  code: string
   name: string
-  age: number
-  gender: string
   notes: string
-  composite_unique_1: string
-  composite_unique_2: string
-  optional_unique: string
-  optional_composite_unique_1: string
-  optional_composite_unique_2: string
-  xxx_composite_unique_1: string
-  xxx_composite_unique_2: string
   is_archived: boolean
   created_at: Date
   created_by: IAuthUser
@@ -49,26 +39,16 @@ export class RetrieveRepository implements IRetrieveRepository {
 
     return {
       _id: response.data[0]._id,
-      code: response.data[0].code,
       name: response.data[0].name,
-      age: response.data[0].age,
-      gender: response.data[0].gender,
       notes: response.data[0].notes,
-      composite_unique_1: response.data[0].composite_unique_1,
-      composite_unique_2: response.data[0].composite_unique_2,
-      optional_unique: response.data[0].optional_unique,
-      optional_composite_unique_1: response.data[0].optional_composite_unique_1,
-      optional_composite_unique_2: response.data[0].optional_composite_unique_2,
-      xxx_composite_unique_1: response.data[0].xxx_composite_unique_1,
-      xxx_composite_unique_2: response.data[0].xxx_composite_unique_2,
       is_archived: response.data[0].is_archived,
       created_at: response.data[0].created_at,
       created_by: response.data[0].created_by,
     };
   }
 
-  async raw(_id: string): Promise<IExample | null> {
-    const response = await this.database.collection(collectionName).retrieve<IExample>(_id, this.options);
+  async raw(_id: string): Promise<IProperty | null> {
+    const response = await this.database.collection(collectionName).retrieve<IProperty>(_id, this.options);
     if (!response) {
       return null;
     }
@@ -114,18 +94,8 @@ export class RetrieveRepository implements IRetrieveRepository {
       {
         $project: {
           _id: 1,
-          code: 1,
           name: 1,
-          age: 1,
-          gender: 1,
           notes: 1,
-          composite_unique_1: 1,
-          composite_unique_2: 1,
-          optional_unique: 1,
-          optional_composite_unique_1: 1,
-          optional_composite_unique_2: 1,
-          xxx_composite_unique_1: 1,
-          xxx_composite_unique_2: 1,
           is_archived: 1,
           created_at: 1,
           created_by: 1,

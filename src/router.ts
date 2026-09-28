@@ -7,12 +7,12 @@ import ablyRouter from './modules/ably/router';
 import auditLogRouter from './modules/audit-logs/router';
 import counterRouter from './modules/counters/router';
 import healthRouter from './modules/health/router';
-import masterExampleRouter from './modules/master/examples/router';
 import masterFacilityRouter from './modules/master/facilities/router';
 import masterLandTitleRouter from './modules/master/land-titles/router';
 import masterPermissionRouter from './modules/master/permissions/router';
 import masterProblemRouter from './modules/master/problems/router';
 import masterPromoRouter from './modules/master/promos/router';
+import masterPropertyRouter from './modules/master/properties/router';
 import masterRoleRouter from './modules/master/roles/router';
 import masterUserRouter from './modules/master/users/router';
 import authRouter from './modules/master/users/router-auth';
@@ -39,11 +39,11 @@ export default async function (baseRouterInput: IBaseAppInput) {
   app.use('/v1/master/users', await masterUserRouter(baseRouterInput));
   app.use('/v1/master/permissions', await masterPermissionRouter(baseRouterInput));
   app.use('/v1/master/roles', await masterRoleRouter(baseRouterInput));
-  app.use('/v1/master/examples', await masterExampleRouter(baseRouterInput));
   app.use('/v1/master/land-titles', await masterLandTitleRouter(baseRouterInput));
   app.use('/v1/master/facilities', await masterFacilityRouter(baseRouterInput));
   app.use('/v1/master/problems', await masterProblemRouter(baseRouterInput));
   app.use('/v1/master/promos', await masterPromoRouter(baseRouterInput));
+  app.use('/v1/master/properties', await masterPropertyRouter(baseRouterInput));
 
   /**
    * Rendered email templates
