@@ -39,7 +39,12 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
       data: response.data.map(item => {
         return {
           _id: item._id,
+          code: item.code,
           name: item.name,
+          address: item.address,
+          subdistrict: item.subdistrict,
+          district: item.district,
+          city: item.city,
           notes: item.notes,
           is_archived: item.is_archived,
           created_at: item.created_at,
@@ -110,7 +115,12 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
       {
         $project: {
           _id: 1,
+          code: 1,
           name: 1,
+          address: 1,
+          subdistrict: 1,
+          district: 1,
+          city: 1,
           notes: 1,
           is_archived: 1,
           created_at: 1,

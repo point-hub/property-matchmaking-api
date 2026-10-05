@@ -18,7 +18,19 @@ export interface IDeps {
 export interface ISuccessData {
   data: {
     _id?: string
+    code?: string
     name?: string
+    address?: string
+    subdistrict?: string
+    district?: string
+    city?: string
+    land_titles?: string[]
+    facilities?: string[]
+    promos?: string[]
+    pricelists?: string[]
+    developer_name?: string[]
+    whatsapp?: string[]
+    price?: string[]
     notes?: string
     is_archived?: boolean
     created_at?: Date
@@ -62,7 +74,12 @@ export class RetrieveManyUseCase extends BaseUseCase<IInput, IDeps, ISuccessData
       data: response.data.map(item => {
         const mapped = {
           _id: item._id,
+          code: item.code,
           name: item.name,
+          address: item.address,
+          subdistrict: item.subdistrict,
+          district: item.district,
+          city: item.city,
           notes: item.notes,
           is_archived: item.is_archived,
           created_at: item.created_at,

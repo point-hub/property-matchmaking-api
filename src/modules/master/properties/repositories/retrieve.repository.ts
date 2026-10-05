@@ -12,7 +12,12 @@ export interface IRetrieveRepository {
 
 export interface IRetrieveOutput {
   _id: string
+  code: string
   name: string
+  address: string
+  subdistrict: string
+  district: string
+  city: string
   notes: string
   is_archived: boolean
   created_at: Date
@@ -39,7 +44,12 @@ export class RetrieveRepository implements IRetrieveRepository {
 
     return {
       _id: response.data[0]._id,
+      code: response.data[0].code,
       name: response.data[0].name,
+      address: response.data[0].address,
+      subdistrict: response.data[0].subdistrict,
+      district: response.data[0].district,
+      city: response.data[0].city,
       notes: response.data[0].notes,
       is_archived: response.data[0].is_archived,
       created_at: response.data[0].created_at,
@@ -94,7 +104,12 @@ export class RetrieveRepository implements IRetrieveRepository {
       {
         $project: {
           _id: 1,
+          code: 1,
           name: 1,
+          address: 1,
+          subdistrict: 1,
+          district: 1,
+          city: 1,
           notes: 1,
           is_archived: 1,
           created_at: 1,

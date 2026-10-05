@@ -19,7 +19,12 @@ export interface IDeps {
 
 export interface ISuccessData {
   _id: string
-  name: string
+  code?: string
+  name?: string
+  address?: string
+  subdistrict?: string
+  district?: string
+  city?: string
   notes?: string
   is_archived: boolean
   created_at: Date
@@ -54,7 +59,12 @@ export class RetrieveUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     // Return a success response.
     return this.success({
       _id: response._id,
+      code: response.code,
       name: response.name,
+      address: response.address,
+      subdistrict: response.subdistrict,
+      district: response.district,
+      city: response.city,
       notes: response.notes,
       is_archived: response.is_archived,
       created_at: response.created_at,
