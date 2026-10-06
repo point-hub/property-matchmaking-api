@@ -42,7 +42,7 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
           code: item.code,
           name: item.name,
           address: item.address,
-          subdistrict: item.subdistrict,
+          village: item.village,
           district: item.district,
           city: item.city,
           google_map_link: item.google_map_link,
@@ -76,7 +76,7 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
     // General search across multiple fields
     if (query?.['search.all']) {
       const searchRegex = { $regex: query?.['search.all'], $options: 'i' };
-      const fields = ['code', 'name', 'address', 'subdistrict', 'district', 'city', 'instagram', 'land_titles', 'facilities', 'promos.name', 'developer_name', 'whatsapp'];
+      const fields = ['code', 'name', 'address', 'village', 'district', 'city', 'instagram', 'land_titles', 'facilities', 'promos.name', 'developer_name', 'whatsapp'];
       filters.push({
         $or: fields.map((field) => ({ [field]: searchRegex })),
       });
@@ -86,7 +86,7 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
     BaseMongoDBQueryFilters.addRegexFilter(filters, 'code', query?.['search.code']);
     BaseMongoDBQueryFilters.addRegexFilter(filters, 'name', query?.['search.name']);
     BaseMongoDBQueryFilters.addRegexFilter(filters, 'address', query?.['search.address']);
-    BaseMongoDBQueryFilters.addRegexFilter(filters, 'subdistrict', query?.['search.subdistrict']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'village', query?.['search.village']);
     BaseMongoDBQueryFilters.addRegexFilter(filters, 'district', query?.['search.district']);
     BaseMongoDBQueryFilters.addRegexFilter(filters, 'city', query?.['search.city']);
     BaseMongoDBQueryFilters.addRegexFilter(filters, 'instagram', query?.['search.instagram']);
@@ -157,7 +157,7 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
           code: 1,
           name: 1,
           address: 1,
-          subdistrict: 1,
+          village: 1,
           district: 1,
           city: 1,
           google_map_link: 1,

@@ -7,7 +7,7 @@ export const createRules = {
   code: ['required', 'string'],
   name: ['required', 'string'],
   address: ['required', 'string'],
-  subdistrict: ['required', 'string'],
+  village: ['required', 'string'],
   district: ['required', 'string'],
   city: ['required', 'string'],
   developer_name: ['required', 'string'],

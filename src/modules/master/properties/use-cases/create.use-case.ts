@@ -19,7 +19,7 @@ export interface IInput {
     code: string
     name: string
     address: string
-    subdistrict: string
+    village: string
     district: string
     city: string
     google_map_link: string
@@ -75,7 +75,7 @@ export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
       code: input.data.code,
       name: input.data.name,
       address: input.data.address,
-      subdistrict: input.data.subdistrict,
+      village: input.data.village,
       district: input.data.district,
       city: input.data.city,
       google_map_link: input.data.google_map_link,

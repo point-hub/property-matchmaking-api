@@ -22,7 +22,7 @@ export interface ISuccessData {
   code?: string
   name?: string
   address?: string
-  subdistrict?: string
+  village?: string
   district?: string
   city?: string
   google_map_link?: string
@@ -73,7 +73,7 @@ export class RetrieveUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
       code: response.code,
       name: response.name,
       address: response.address,
-      subdistrict: response.subdistrict,
+      village: response.village,
       district: response.district,
       city: response.city,
       google_map_link: response.google_map_link,

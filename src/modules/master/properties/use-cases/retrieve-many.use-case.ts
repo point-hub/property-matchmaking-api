@@ -21,7 +21,7 @@ export interface ISuccessData {
     code?: string
     name?: string
     address?: string
-    subdistrict?: string
+    village?: string
     district?: string
     city?: string
     pricelists?: string[]
@@ -79,7 +79,7 @@ export class RetrieveManyUseCase extends BaseUseCase<IInput, IDeps, ISuccessData
           code: item.code,
           name: item.name,
           address: item.address,
-          subdistrict: item.subdistrict,
+          village: item.village,
           district: item.district,
           city: item.city,
           google_map_link: item.google_map_link,

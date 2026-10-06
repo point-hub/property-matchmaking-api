@@ -15,7 +15,7 @@ export interface IRetrieveOutput {
   code: string
   name: string
   address: string
-  subdistrict: string
+  village: string
   district: string
   city: string
   google_map_link: string
@@ -58,7 +58,7 @@ export class RetrieveRepository implements IRetrieveRepository {
       code: response.data[0].code,
       name: response.data[0].name,
       address: response.data[0].address,
-      subdistrict: response.data[0].subdistrict,
+      village: response.data[0].village,
       district: response.data[0].district,
       city: response.data[0].city,
       google_map_link: response.data[0].google_map_link,
@@ -129,7 +129,7 @@ export class RetrieveRepository implements IRetrieveRepository {
           code: 1,
           name: 1,
           address: 1,
-          subdistrict: 1,
+          village: 1,
           district: 1,
           city: 1,
           google_map_link: 1,
