@@ -134,6 +134,7 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
           city: 1,
           google_map_link: 1,
           instagram: 1,
+          pricelists: 1,
           land_titles: 1,
           facilities: 1,
           promos: 1,

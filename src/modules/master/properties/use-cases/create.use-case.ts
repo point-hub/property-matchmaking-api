@@ -32,6 +32,7 @@ export interface IInput {
     whatsapp: string
     mou: string
     photos_gate: string[]
+    photos_building: string[]
     notes: string
   }
 }
@@ -87,6 +88,7 @@ export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
       whatsapp: input.data.whatsapp,
       mou: input.data.mou,
       photos_gate: input.data.photos_gate,
+      photos_building: input.data.photos_building,
       notes: input.data.notes,
       is_archived: false,
       created_at: new Date(),

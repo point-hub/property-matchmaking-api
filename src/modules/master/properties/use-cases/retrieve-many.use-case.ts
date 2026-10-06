@@ -84,6 +84,7 @@ export class RetrieveManyUseCase extends BaseUseCase<IInput, IDeps, ISuccessData
           city: item.city,
           google_map_link: item.google_map_link,
           instagram: item.instagram,
+          pricelists: item.pricelists,
           land_titles: item.land_titles,
           facilities: item.facilities,
           promos: item.promos,
