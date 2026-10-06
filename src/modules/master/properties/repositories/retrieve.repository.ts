@@ -132,6 +132,8 @@ export class RetrieveRepository implements IRetrieveRepository {
           subdistrict: 1,
           district: 1,
           city: 1,
+          google_map_link: 1,
+          instagram: 1,
           pricelists: 1,
           land_titles: 1,
           facilities: 1,

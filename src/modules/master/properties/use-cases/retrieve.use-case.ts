@@ -78,6 +78,7 @@ export class RetrieveUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
       city: response.city,
       google_map_link: response.google_map_link,
       instagram: response.instagram,
+      pricelists: response.pricelists,
       land_titles: response.land_titles,
       facilities: response.facilities,
       promos: response.promos,

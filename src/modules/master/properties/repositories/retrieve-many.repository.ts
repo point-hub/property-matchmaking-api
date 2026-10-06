@@ -76,14 +76,42 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
     // General search across multiple fields
     if (query?.['search.all']) {
       const searchRegex = { $regex: query?.['search.all'], $options: 'i' };
-      const fields = ['name'];
+      const fields = ['code', 'name', 'address', 'subdistrict', 'district', 'city', 'instagram', 'land_titles', 'facilities', 'promos.name', 'developer_name', 'whatsapp'];
       filters.push({
         $or: fields.map((field) => ({ [field]: searchRegex })),
       });
     }
 
     // Filter specific field
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'code', query?.['search.code']);
     BaseMongoDBQueryFilters.addRegexFilter(filters, 'name', query?.['search.name']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'address', query?.['search.address']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'subdistrict', query?.['search.subdistrict']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'district', query?.['search.district']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'city', query?.['search.city']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'instagram', query?.['search.instagram']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'land_titles', query?.['search.land_titles']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'facilities', query?.['search.facilities']);
+    if (query?.['search.promos']) {
+      filters.push({
+        $or: [
+          {
+            'promos.name': {
+              $regex: query?.['search.promos'],
+              $options: 'i',
+            },
+          },
+          // {
+          //   'promos.description': {
+          //     $regex: query?.['search.promos'],
+          //     $options: 'i',
+          //   },
+          // },
+        ],
+      });
+    }
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'developer_name', query?.['search.developer_name']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'whatsapp', query?.['search.whatsapp']);
     BaseMongoDBQueryFilters.addRegexFilter(filters, 'notes', query?.['search.notes']);
 
     // Filter boolean
