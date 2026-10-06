@@ -12,7 +12,9 @@ export const presignUploadController: IController = async (controllerInput: ICon
     bucket: s3Config.bucket,
   });
 
-  const publicPath = `/${tokenGenerate()}.webp`;
+  const extension = controllerInput.req.body?.extension as string ?? '';
+
+  const publicPath = `/${tokenGenerate()}.${extension}`;
 
   const uploadUrl = client.presign(publicPath, {
     bucket: s3Config.bucket,
