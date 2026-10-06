@@ -1,8 +1,8 @@
 import type { IDatabase, IPagination, IPipeline, IQuery } from '@point-hub/papi';
-import { BaseMongoDBQueryFilters } from '@point-hub/papi';
+import { BaseMongoDBQueryFilters, BaseMongoDBQuerystring } from '@point-hub/papi';
 
 import { collectionName } from '../entity';
-import type { IProperty } from '../interface';
+import type { IFacility } from '../interface';
 import type { IRetrieveOutput } from './retrieve.repository';
 
 export interface IRetrieveManyRepository {
@@ -16,7 +16,7 @@ export interface IRetrieveManyOutput {
 }
 
 export interface IRetrieveManyRawOutput {
-  data: IProperty[]
+  data: IFacility[]
   pagination: IPagination
 }
 
@@ -30,6 +30,10 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
     const pipeline: IPipeline[] = [];
 
     pipeline.push(...this.pipeQueryFilter(query));
+    pipeline.push(
+      { $skip: (BaseMongoDBQuerystring.page(query?.page) - 1) * BaseMongoDBQuerystring.limit(query?.page_size) },
+      { $limit: BaseMongoDBQuerystring.limit(query?.page_size) },
+    );
     pipeline.push(...this.pipeJoinCreatedById());
     pipeline.push(...this.pipeProject());
 
@@ -39,23 +43,15 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
       data: response.data.map(item => {
         return {
           _id: item._id,
-          code: item.code,
-          name: item.name,
-          address: item.address,
-          subdistrict: item.subdistrict,
-          district: item.district,
-          city: item.city,
-          google_map_link: item.google_map_link,
-          instagram: item.instagram,
-          pricelists: item.pricelists,
-          land_titles: item.land_titles,
-          facilities: item.facilities,
-          promos: item.promos,
-          developer_name: item.developer_name,
-          whatsapp: item.whatsapp,
-          mou: item.mou,
-          photos_gate: item.photos_gate,
-          photos_building: item.photos_building,
+          village_type: item.village_type,
+          village_code: item.village_code,
+          village_name: item.village_name,
+          district_code: item.district_code,
+          district_name: item.district_name,
+          city_code: item.city_code,
+          city_name: item.city_name,
+          province_code: item.province_code,
+          province_name: item.province_name,
           notes: item.notes,
           is_archived: item.is_archived,
           created_at: item.created_at,
@@ -67,7 +63,7 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
   }
 
   async raw(query: IQuery): Promise<IRetrieveManyRawOutput> {
-    return await this.database.collection(collectionName).retrieveMany<IProperty>(query, this.options);
+    return await this.database.collection(collectionName).retrieveMany<IFacility>(query, this.options);
   }
 
   private pipeQueryFilter(query: IQuery): IPipeline[] {
@@ -76,14 +72,22 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
     // General search across multiple fields
     if (query?.['search.all']) {
       const searchRegex = { $regex: query?.['search.all'], $options: 'i' };
-      const fields = ['name'];
+      const fields = ['village_name', 'district_name', 'city_name'];
       filters.push({
         $or: fields.map((field) => ({ [field]: searchRegex })),
       });
     }
 
     // Filter specific field
-    BaseMongoDBQueryFilters.addRegexFilter(filters, 'name', query?.['search.name']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'village_type', query?.['search.village_type']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'village_code', query?.['search.village_code']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'village_name', query?.['search.village_name']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'district_code', query?.['search.district_code']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'district_name', query?.['search.district_name']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'city_code', query?.['search.city_code']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'city_name', query?.['search.city_name']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'province_code', query?.['search.province_code']);
+    BaseMongoDBQueryFilters.addRegexFilter(filters, 'province_name', query?.['search.province_name']);
     BaseMongoDBQueryFilters.addRegexFilter(filters, 'notes', query?.['search.notes']);
 
     // Filter boolean
@@ -126,22 +130,15 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
       {
         $project: {
           _id: 1,
-          code: 1,
-          name: 1,
-          address: 1,
-          subdistrict: 1,
-          district: 1,
-          city: 1,
-          google_map_link: 1,
-          instagram: 1,
-          land_titles: 1,
-          facilities: 1,
-          promos: 1,
-          developer_name: 1,
-          whatsapp: 1,
-          mou: 1,
-          photos_gate: 1,
-          photos_building: 1,
+          village_type: 1,
+          village_code: 1,
+          village_name: 1,
+          district_code: 1,
+          district_name: 1,
+          city_code: 1,
+          city_name: 1,
+          province_code: 1,
+          province_name: 1,
           notes: 1,
           is_archived: 1,
           created_at: 1,

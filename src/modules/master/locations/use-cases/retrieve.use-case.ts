@@ -19,23 +19,15 @@ export interface IDeps {
 
 export interface ISuccessData {
   _id: string
-  code?: string
-  name?: string
-  address?: string
-  subdistrict?: string
-  district?: string
-  city?: string
-  google_map_link?: string
-  instagram?: string
-  pricelists?: string[]
-  land_titles?: string[]
-  facilities?: string[]
-  promos?: string[]
-  developer_name?: string[]
-  whatsapp?: string[]
-  mou?: string[]
-  photos_gate?: string[]
-  photos_building?: string[]
+  village_type?: string
+  village_code?: string
+  village_name?: string
+  district_code?: string
+  district_name?: string
+  city_code?: string
+  city_name?: string
+  province_code?: string
+  province_name?: string
   notes?: string
   is_archived: boolean
   created_at: Date
@@ -43,7 +35,7 @@ export interface ISuccessData {
 }
 
 /**
- * Use case: Retrieve Property.
+ * Use case: Retrieve Facility.
  *
  * Responsibilities:
  * - Check whether the user is authorized to perform this action
@@ -53,7 +45,7 @@ export interface ISuccessData {
 export class RetrieveUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
   async handle(input: IInput): Promise<IUseCaseOutputSuccess<ISuccessData> | IUseCaseOutputFailed> {
     // Check whether the user is authorized to perform this action
-    const isAuthorized = this.deps.authorizationService.hasAccess(input.authUser.role?.permissions, 'properties:read');
+    const isAuthorized = this.deps.authorizationService.hasAccess(input.authUser.role?.permissions, 'locations:read');
     if (!isAuthorized) {
       return this.fail({ code: 403, message: 'You do not have permission to perform this action.' });
     }
@@ -70,22 +62,15 @@ export class RetrieveUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     // Return a success response.
     return this.success({
       _id: response._id,
-      code: response.code,
-      name: response.name,
-      address: response.address,
-      subdistrict: response.subdistrict,
-      district: response.district,
-      city: response.city,
-      google_map_link: response.google_map_link,
-      instagram: response.instagram,
-      land_titles: response.land_titles,
-      facilities: response.facilities,
-      promos: response.promos,
-      developer_name: response.developer_name,
-      whatsapp: response.whatsapp,
-      mou: response.mou,
-      photos_gate: response.photos_gate,
-      photos_building: response.photos_building,
+      village_type: response.village_type,
+      village_code: response.village_code,
+      village_name: response.village_name,
+      district_code: response.district_code,
+      district_name: response.district_name,
+      city_code: response.city_code,
+      city_name: response.city_name,
+      province_code: response.province_code,
+      province_name: response.province_name,
       notes: response.notes,
       is_archived: response.is_archived,
       created_at: response.created_at,

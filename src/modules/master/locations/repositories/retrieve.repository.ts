@@ -3,32 +3,24 @@ import type { IDatabase, IPipeline } from '@point-hub/papi';
 import type { IAuthUser } from '@/modules/master/users/interface';
 
 import { collectionName } from '../entity';
-import type { IProperty } from '../interface';
+import type { IFacility } from '../interface';
 
 export interface IRetrieveRepository {
   handle(_id: string): Promise<IRetrieveOutput | null>
-  raw(_id: string): Promise<IProperty | null>
+  raw(_id: string): Promise<IFacility | null>
 }
 
 export interface IRetrieveOutput {
   _id: string
-  code: string
-  name: string
-  address: string
-  subdistrict: string
-  district: string
-  city: string
-  google_map_link: string
-  instagram: string
-  pricelists: string[]
-  land_titles: string[]
-  facilities: string[]
-  promos: string[]
-  developer_name: string[]
-  whatsapp: string[]
-  mou: string[]
-  photos_gate: string[]
-  photos_building: string[]
+  village_type: string
+  village_code: string
+  village_name: string
+  district_code: string
+  district_name: string
+  city_code: string
+  city_name: string
+  province_code: string
+  province_name: string
   notes: string
   is_archived: boolean
   created_at: Date
@@ -55,23 +47,15 @@ export class RetrieveRepository implements IRetrieveRepository {
 
     return {
       _id: response.data[0]._id,
-      code: response.data[0].code,
-      name: response.data[0].name,
-      address: response.data[0].address,
-      subdistrict: response.data[0].subdistrict,
-      district: response.data[0].district,
-      city: response.data[0].city,
-      google_map_link: response.data[0].google_map_link,
-      instagram: response.data[0].instagram,
-      pricelists: response.data[0].pricelists,
-      land_titles: response.data[0].land_titles,
-      facilities: response.data[0].facilities,
-      promos: response.data[0].promos,
-      developer_name: response.data[0].developer_name,
-      whatsapp: response.data[0].whatsapp,
-      mou: response.data[0].mou,
-      photos_gate: response.data[0].photos_gate,
-      photos_building: response.data[0].photos_building,
+      village_type: response.data[0].village_type,
+      village_code: response.data[0].village_code,
+      village_name: response.data[0].village_name,
+      district_code: response.data[0].district_code,
+      district_name: response.data[0].district_name,
+      city_code: response.data[0].city_code,
+      city_name: response.data[0].city_name,
+      province_code: response.data[0].province_code,
+      province_name: response.data[0].province_name,
       notes: response.data[0].notes,
       is_archived: response.data[0].is_archived,
       created_at: response.data[0].created_at,
@@ -79,8 +63,8 @@ export class RetrieveRepository implements IRetrieveRepository {
     };
   }
 
-  async raw(_id: string): Promise<IProperty | null> {
-    const response = await this.database.collection(collectionName).retrieve<IProperty>(_id, this.options);
+  async raw(_id: string): Promise<IFacility | null> {
+    const response = await this.database.collection(collectionName).retrieve<IFacility>(_id, this.options);
     if (!response) {
       return null;
     }
@@ -126,21 +110,15 @@ export class RetrieveRepository implements IRetrieveRepository {
       {
         $project: {
           _id: 1,
-          code: 1,
-          name: 1,
-          address: 1,
-          subdistrict: 1,
-          district: 1,
-          city: 1,
-          pricelists: 1,
-          land_titles: 1,
-          facilities: 1,
-          promos: 1,
-          developer_name: 1,
-          whatsapp: 1,
-          mou: 1,
-          photos_gate: 1,
-          photos_building: 1,
+          village_type: 1,
+          village_code: 1,
+          village_name: 1,
+          district_code: 1,
+          district_name: 1,
+          city_code: 1,
+          city_name: 1,
+          province_code: 1,
+          province_name: 1,
           notes: 1,
           is_archived: 1,
           created_at: 1,

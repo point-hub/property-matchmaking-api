@@ -24,6 +24,7 @@ export const getPermissions = (): string[] => {
     'master': ['module'],
     'users': ['module', 'read', 'create', 'update', 'delete'],
     'roles': ['module', 'read', 'create', 'update', 'delete'],
+    'locations': ['module', 'read', 'create', 'update', 'delete'],
     'land-titles': ['module', 'read', 'create', 'update', 'delete'],
     'facilities': ['module', 'read', 'create', 'update', 'delete'],
     'problems': ['module', 'read', 'create', 'update', 'delete'],

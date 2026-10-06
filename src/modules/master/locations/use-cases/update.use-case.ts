@@ -5,116 +5,111 @@ import type { IUniqueValidationService } from '@/modules/_shared/services/unique
 import type { IUserAgent } from '@/modules/_shared/types/user-agent.type';
 import type { IAblyService } from '@/modules/ably/services/ably.service';
 import type { IAuditLogService } from '@/modules/audit-logs/services/audit-log.service';
-import type { ICodeGeneratorService } from '@/modules/counters/services/code-generator.service';
 import type { IAuthUser } from '@/modules/master/users/interface';
 
-import { collectionName, PropertyEntity } from '../entity';
-import type { ICreateRepository } from '../repositories/create.repository';
+import { collectionName, FacilityEntity } from '../entity';
+import type { IRetrieveRepository } from '../repositories/retrieve.repository';
+import type { IUpdateRepository } from '../repositories/update.repository';
 
 export interface IInput {
   ip: string
   authUser: IAuthUser
   userAgent: IUserAgent
-  data: {
-    code: string
-    name: string
-    address: string
-    subdistrict: string
-    district: string
-    city: string
-    google_map_link: string
-    instagram: string
-    pricelists: []
-    land_titles: string[]
-    facilities: string[]
-    promos: []
-    developer_name: string
-    whatsapp: string
-    mou: string
-    photos_gate: string[]
-    notes: string
+  filter: {
+    _id: string
+  }
+  data?: {
+    name?: string
+    notes?: string
+    update_reason?: string
+    is_archived?: boolean
   }
 }
 
 export interface IDeps {
-  createRepository: ICreateRepository
+  updateRepository: IUpdateRepository
+  retrieveRepository: IRetrieveRepository
   ablyService: IAblyService
   auditLogService: IAuditLogService
   authorizationService: IAuthorizationService
-  codeGeneratorService: ICodeGeneratorService
   uniqueValidationService: IUniqueValidationService
 }
 
 export interface ISuccessData {
-  inserted_id: string
+  matched_count: number
+  modified_count: number
 }
 
 /**
- * Use case: Create Property.
+ * Use case: Update Facility.
  *
  * Responsibilities:
- * - Check whether the user is authorized to perform this action.
+ * - Check whether the user is authorized to perform this action
+ * - Check if the record exists
  * - Normalizes data (trim).
  * - Validate uniqueness: single unique name field.
+ * - Reject update when no fields have changed
  * - Save the data to the database.
  * - Create an audit log entry for this operation.
  * - Publish realtime notification event to the recipient’s channel.
  * - Return a success response.
  */
-export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
+export class UpdateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
   async handle(input: IInput): Promise<IUseCaseOutputSuccess<ISuccessData> | IUseCaseOutputFailed> {
     // Check whether the user is authorized to perform this action
-    const isAuthorized = this.deps.authorizationService.hasAccess(input.authUser.role?.permissions, 'properties:create');
+    const isAuthorized = this.deps.authorizationService.hasAccess(input.authUser.role?.permissions, 'locations:update');
     if (!isAuthorized) {
       return this.fail({ code: 403, message: 'You do not have permission to perform this action.' });
     }
 
+    // Check if the record exists.
+    const retrieveResponse = await this.deps.retrieveRepository.raw(input.filter._id);
+    if (!retrieveResponse) {
+      return this.fail({ code: 404, message: 'Resource not found' });
+    }
+
     // Normalizes data (trim).
-    const propertyEntity = new PropertyEntity({
-      code: input.data.code,
-      name: input.data.name,
-      address: input.data.address,
-      subdistrict: input.data.subdistrict,
-      district: input.data.district,
-      city: input.data.city,
-      google_map_link: input.data.google_map_link,
-      instagram: input.data.instagram,
-      pricelists: input.data.pricelists,
-      land_titles: input.data.land_titles,
-      facilities: input.data.facilities,
-      promos: input.data.promos,
-      developer_name: input.data.developer_name,
-      whatsapp: input.data.whatsapp,
-      mou: input.data.mou,
-      photos_gate: input.data.photos_gate,
-      notes: input.data.notes,
-      is_archived: false,
-      created_at: new Date(),
-      created_by_id: input.authUser._id,
+    const locationEntity = new FacilityEntity({
+      name: input.data?.name,
+      notes: input.data?.notes,
+      is_archived: input.data?.is_archived,
     });
 
     // Validate uniqueness: single unique name field.
-    const uniqueNameErrors = await this.deps.uniqueValidationService.validate(collectionName, { name: input.data.name });
+    const uniqueNameErrors = await this.deps.uniqueValidationService.validate(
+      collectionName,
+      { name: input.data?.name },
+      { except: { _id: input.filter._id } },
+    );
     if (uniqueNameErrors) {
       return this.fail({ code: 422, message: 'Validation failed due to duplicate values.', errors: uniqueNameErrors });
     }
 
+    // Reject update when no fields have changed
+    const changes = this.deps.auditLogService.buildChanges(
+      retrieveResponse,
+      this.deps.auditLogService.mergeDefined(retrieveResponse, locationEntity.data),
+    );
+    if (changes.summary.fields?.length === 0) {
+      return this.fail({ code: 400, message: 'No changes detected. Please modify at least one field before saving.' });
+    }
+
     // Save the data to the database.
-    const createResponse = await this.deps.createRepository.handle(propertyEntity.data);
+    const response = await this.deps.updateRepository.handle(input.filter._id, locationEntity.data);
 
     // Create an audit log entry for this operation.
-    const changes = this.deps.auditLogService.buildChanges({}, propertyEntity.data);
     const dataLog = {
       operation_id: this.deps.auditLogService.generateOperationId(),
       entity_type: collectionName,
-      entity_id: createResponse.inserted_id,
-      entity_ref: input.data.name,
+      entity_id: input.filter._id,
+      entity_ref: retrieveResponse.name!,
       actor_type: 'user',
       actor_id: input.authUser._id,
       actor_name: input.authUser.username,
-      action: 'create',
-      module: 'properties',
-      system_reason: 'insert data',
+      action: 'update',
+      module: 'locations',
+      system_reason: 'update data',
+      user_reason: input.data?.update_reason,
       changes: changes,
       metadata: {
         ip: input.ip,
@@ -127,21 +122,22 @@ export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     await this.deps.auditLogService.log(dataLog);
 
     // Publish realtime notification event to the recipient’s channel.
-    this.deps.ablyService.publish(`notifications:${input.authUser._id} `, 'logs:new', {
-      type: 'properties',
+    this.deps.ablyService.publish(`notifications:${input.authUser._id}`, 'logs:new', {
+      type: 'locations',
       actor_id: input.authUser._id,
       recipient_id: input.authUser._id,
       is_read: false,
       created_at: new Date(),
       entities: {
-        properties: createResponse.inserted_id,
+        locations: input.filter._id,
       },
       data: dataLog,
     });
 
     // Return a success response.
     return this.success({
-      inserted_id: createResponse.inserted_id,
+      matched_count: response.matched_count,
+      modified_count: response.modified_count,
     });
   }
 }

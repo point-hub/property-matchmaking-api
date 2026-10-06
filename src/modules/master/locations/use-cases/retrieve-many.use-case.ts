@@ -18,21 +18,15 @@ export interface IDeps {
 export interface ISuccessData {
   data: {
     _id?: string
-    code?: string
-    name?: string
-    address?: string
-    subdistrict?: string
-    district?: string
-    city?: string
-    pricelists?: string[]
-    land_titles?: string[]
-    facilities?: string[]
-    promos?: string[]
-    developer_name?: string[]
-    whatsapp?: string[]
-    mou?: string[]
-    photos_gate?: string[]
-    photos_building?: string[]
+    village_type?: string
+    village_code?: string
+    village_name?: string
+    district_code?: string
+    district_name?: string
+    city_code?: string
+    city_name?: string
+    province_code?: string
+    province_name?: string
     notes?: string
     is_archived?: boolean
     created_at?: Date
@@ -47,7 +41,7 @@ export interface ISuccessData {
 }
 
 /**
- * Use case: Retrieve Properties.
+ * Use case: Retrieve Locations.
  *
  * Responsibilities:
  * - Check whether the user is authorized to perform this action
@@ -58,7 +52,7 @@ export interface ISuccessData {
 export class RetrieveManyUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
   async handle(input: IInput): Promise<IUseCaseOutputSuccess<ISuccessData> | IUseCaseOutputFailed> {
     // Check whether the user is authorized to perform this action
-    const isAuthorized = this.deps.authorizationService.hasAccess(input.authUser.role?.permissions, 'properties:read');
+    const isAuthorized = this.deps.authorizationService.hasAccess(input.authUser.role?.permissions, 'locations:read');
     if (!isAuthorized) {
       return this.fail({ code: 403, message: 'You do not have permission to perform this action.' });
     }
@@ -76,22 +70,15 @@ export class RetrieveManyUseCase extends BaseUseCase<IInput, IDeps, ISuccessData
       data: response.data.map(item => {
         const mapped = {
           _id: item._id,
-          code: item.code,
-          name: item.name,
-          address: item.address,
-          subdistrict: item.subdistrict,
-          district: item.district,
-          city: item.city,
-          google_map_link: item.google_map_link,
-          instagram: item.instagram,
-          land_titles: item.land_titles,
-          facilities: item.facilities,
-          promos: item.promos,
-          developer_name: item.developer_name,
-          whatsapp: item.whatsapp,
-          mou: item.mou,
-          photos_gate: item.photos_gate,
-          photos_building: item.photos_building,
+          village_type: item.village_type,
+          village_code: item.village_code,
+          village_name: item.village_name,
+          district_code: item.district_code,
+          district_name: item.district_name,
+          city_code: item.city_code,
+          city_name: item.city_name,
+          province_code: item.province_code,
+          province_name: item.province_name,
           notes: item.notes,
           is_archived: item.is_archived,
           created_at: item.created_at,

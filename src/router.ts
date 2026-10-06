@@ -9,6 +9,7 @@ import counterRouter from './modules/counters/router';
 import healthRouter from './modules/health/router';
 import masterFacilityRouter from './modules/master/facilities/router';
 import masterLandTitleRouter from './modules/master/land-titles/router';
+import masterLocationRouter from './modules/master/locations/router';
 import masterPermissionRouter from './modules/master/permissions/router';
 import masterProblemRouter from './modules/master/problems/router';
 import masterPromoRouter from './modules/master/promos/router';
@@ -41,6 +42,7 @@ export default async function (baseRouterInput: IBaseAppInput) {
   app.use('/v1/master/users', await masterUserRouter(baseRouterInput));
   app.use('/v1/master/permissions', await masterPermissionRouter(baseRouterInput));
   app.use('/v1/master/roles', await masterRoleRouter(baseRouterInput));
+  app.use('/v1/master/locations', await masterLocationRouter(baseRouterInput));
   app.use('/v1/master/land-titles', await masterLandTitleRouter(baseRouterInput));
   app.use('/v1/master/facilities', await masterFacilityRouter(baseRouterInput));
   app.use('/v1/master/problems', await masterProblemRouter(baseRouterInput));

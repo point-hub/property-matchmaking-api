@@ -8,7 +8,7 @@ import type { IAuditLogService } from '@/modules/audit-logs/services/audit-log.s
 import type { ICodeGeneratorService } from '@/modules/counters/services/code-generator.service';
 import type { IAuthUser } from '@/modules/master/users/interface';
 
-import { collectionName, PropertyEntity } from '../entity';
+import { collectionName, FacilityEntity } from '../entity';
 import type { ICreateRepository } from '../repositories/create.repository';
 
 export interface IInput {
@@ -16,22 +16,7 @@ export interface IInput {
   authUser: IAuthUser
   userAgent: IUserAgent
   data: {
-    code: string
     name: string
-    address: string
-    subdistrict: string
-    district: string
-    city: string
-    google_map_link: string
-    instagram: string
-    pricelists: []
-    land_titles: string[]
-    facilities: string[]
-    promos: []
-    developer_name: string
-    whatsapp: string
-    mou: string
-    photos_gate: string[]
     notes: string
   }
 }
@@ -50,7 +35,7 @@ export interface ISuccessData {
 }
 
 /**
- * Use case: Create Property.
+ * Use case: Create Facility.
  *
  * Responsibilities:
  * - Check whether the user is authorized to perform this action.
@@ -64,29 +49,14 @@ export interface ISuccessData {
 export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
   async handle(input: IInput): Promise<IUseCaseOutputSuccess<ISuccessData> | IUseCaseOutputFailed> {
     // Check whether the user is authorized to perform this action
-    const isAuthorized = this.deps.authorizationService.hasAccess(input.authUser.role?.permissions, 'properties:create');
+    const isAuthorized = this.deps.authorizationService.hasAccess(input.authUser.role?.permissions, 'locations:create');
     if (!isAuthorized) {
       return this.fail({ code: 403, message: 'You do not have permission to perform this action.' });
     }
 
     // Normalizes data (trim).
-    const propertyEntity = new PropertyEntity({
-      code: input.data.code,
+    const locationEntity = new FacilityEntity({
       name: input.data.name,
-      address: input.data.address,
-      subdistrict: input.data.subdistrict,
-      district: input.data.district,
-      city: input.data.city,
-      google_map_link: input.data.google_map_link,
-      instagram: input.data.instagram,
-      pricelists: input.data.pricelists,
-      land_titles: input.data.land_titles,
-      facilities: input.data.facilities,
-      promos: input.data.promos,
-      developer_name: input.data.developer_name,
-      whatsapp: input.data.whatsapp,
-      mou: input.data.mou,
-      photos_gate: input.data.photos_gate,
       notes: input.data.notes,
       is_archived: false,
       created_at: new Date(),
@@ -100,10 +70,10 @@ export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     }
 
     // Save the data to the database.
-    const createResponse = await this.deps.createRepository.handle(propertyEntity.data);
+    const createResponse = await this.deps.createRepository.handle(locationEntity.data);
 
     // Create an audit log entry for this operation.
-    const changes = this.deps.auditLogService.buildChanges({}, propertyEntity.data);
+    const changes = this.deps.auditLogService.buildChanges({}, locationEntity.data);
     const dataLog = {
       operation_id: this.deps.auditLogService.generateOperationId(),
       entity_type: collectionName,
@@ -113,7 +83,7 @@ export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
       actor_id: input.authUser._id,
       actor_name: input.authUser.username,
       action: 'create',
-      module: 'properties',
+      module: 'locations',
       system_reason: 'insert data',
       changes: changes,
       metadata: {
@@ -128,13 +98,13 @@ export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
 
     // Publish realtime notification event to the recipient’s channel.
     this.deps.ablyService.publish(`notifications:${input.authUser._id} `, 'logs:new', {
-      type: 'properties',
+      type: 'locations',
       actor_id: input.authUser._id,
       recipient_id: input.authUser._id,
       is_read: false,
       created_at: new Date(),
       entities: {
-        properties: createResponse.inserted_id,
+        locations: createResponse.inserted_id,
       },
       data: dataLog,
     });
