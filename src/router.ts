@@ -6,6 +6,7 @@ import { EmailService } from './modules/_shared/services/email.service';
 import ablyRouter from './modules/ably/router';
 import auditLogRouter from './modules/audit-logs/router';
 import counterRouter from './modules/counters/router';
+import customerPreferenceRouter from './modules/customer-preferences/router';
 import healthRouter from './modules/health/router';
 import masterFacilityRouter from './modules/master/facilities/router';
 import masterLandTitleRouter from './modules/master/land-titles/router';
@@ -48,6 +49,7 @@ export default async function (baseRouterInput: IBaseAppInput) {
   app.use('/v1/master/problems', await masterProblemRouter(baseRouterInput));
   app.use('/v1/master/promos', await masterPromoRouter(baseRouterInput));
   app.use('/v1/master/properties', await masterPropertyRouter(baseRouterInput));
+  app.use('/v1/customer-preferences', await customerPreferenceRouter(baseRouterInput));
 
   /**
    * Rendered email templates
