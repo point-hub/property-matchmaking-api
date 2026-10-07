@@ -15,9 +15,7 @@ export const authMiddleware: IMiddleware = async (middlewareInput: IMiddlewareIn
   if (!decoded) { return throwApiError(401); }
 
   const retrieveRepository = new RetrieveRepository(middlewareInput.dbConnection);
-  // const user = await retrieveRepository.handle('6ac36d3c1aeb2feef5366f99');
-  // console.log('authentcate user');
-  // console.log(user);
+
   const user = await retrieveRepository.handle((decoded as { sub: string }).sub);
   if (!user) { return throwApiError(401); }
 

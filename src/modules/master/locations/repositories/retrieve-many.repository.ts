@@ -30,6 +30,15 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
     const pipeline: IPipeline[] = [];
 
     pipeline.push(...this.pipeQueryFilter(query));
+    if (query?.['distinct'] == 'city') {
+      pipeline.push(...this.pipeDistinctCity());
+    }
+    if (query?.['distinct'] == 'district') {
+      pipeline.push(...this.pipeDistinctDistrict());
+    }
+    if (query?.['distinct'] == 'village') {
+      pipeline.push(...this.pipeDistinctVillage());
+    }
     pipeline.push(
       { $skip: (BaseMongoDBQuerystring.page(query?.page) - 1) * BaseMongoDBQuerystring.limit(query?.page_size) },
       { $limit: BaseMongoDBQuerystring.limit(query?.page_size) },
@@ -143,6 +152,54 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
           is_archived: 1,
           created_at: 1,
           created_by: 1,
+        },
+      },
+    ];
+  }
+
+  private pipeDistinctCity(): IPipeline[] {
+    return [
+      {
+        $group: {
+          _id: '$city_code',
+          city_code: { $first: '$city_code' },
+          city_name: { $first: '$city_name' },
+          province_code: { $first: '$province_code' },
+          province_name: { $first: '$province_name' },
+        },
+      },
+    ];
+  }
+
+  private pipeDistinctDistrict(): IPipeline[] {
+    return [
+      {
+        $group: {
+          _id: '$district_code',
+          district_code: { $first: '$district_code' },
+          district_name: { $first: '$district_name' },
+          city_code: { $first: '$city_code' },
+          city_name: { $first: '$city_name' },
+          province_code: { $first: '$province_code' },
+          province_name: { $first: '$province_name' },
+        },
+      },
+    ];
+  }
+
+  private pipeDistinctVillage(): IPipeline[] {
+    return [
+      {
+        $group: {
+          _id: '$village_code',
+          village_code: { $first: '$village_code' },
+          village_name: { $first: '$village_name' },
+          district_code: { $first: '$district_code' },
+          district_name: { $first: '$district_name' },
+          city_code: { $first: '$city_code' },
+          city_name: { $first: '$city_name' },
+          province_code: { $first: '$province_code' },
+          province_name: { $first: '$province_name' },
         },
       },
     ];
