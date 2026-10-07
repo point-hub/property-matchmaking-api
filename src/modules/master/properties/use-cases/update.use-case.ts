@@ -19,7 +19,23 @@ export interface IInput {
     _id: string
   }
   data?: {
-    name?: string
+    code: string
+    name: string
+    address: string
+    village: string
+    district: string
+    city: string
+    google_map_link: string
+    instagram: string
+    pricelists: []
+    land_titles: string[]
+    facilities: string[]
+    promos: []
+    developer_name: string
+    whatsapp: string
+    mou: string
+    photos_gate: string[]
+    photos_building: string[]
     notes?: string
     update_reason?: string
     is_archived?: boolean
@@ -70,7 +86,23 @@ export class UpdateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
 
     // Normalizes data (trim).
     const propertyEntity = new PropertyEntity({
+      code: input.data?.code,
       name: input.data?.name,
+      address: input.data?.address,
+      village: input.data?.village,
+      district: input.data?.district,
+      city: input.data?.city,
+      google_map_link: input.data?.google_map_link,
+      instagram: input.data?.instagram,
+      pricelists: input.data?.pricelists,
+      land_titles: input.data?.land_titles,
+      facilities: input.data?.facilities,
+      promos: input.data?.promos,
+      developer_name: input.data?.developer_name,
+      whatsapp: input.data?.whatsapp,
+      mou: input.data?.mou,
+      photos_gate: input.data?.photos_gate,
+      photos_building: input.data?.photos_building,
       notes: input.data?.notes,
       is_archived: input.data?.is_archived,
     });
