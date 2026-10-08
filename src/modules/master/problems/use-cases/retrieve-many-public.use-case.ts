@@ -1,6 +1,5 @@
 import { BaseUseCase, type IQuery, type IUseCaseOutputFailed, type IUseCaseOutputSuccess } from '@point-hub/papi';
 
-import type { IAuthorizationService } from '@/modules/_shared/services/authorization.service';
 import type { IAuthUser } from '@/modules/master/users/interface';
 
 import type { IRetrieveManyRepository } from '../repositories/retrieve-many.repository';
@@ -11,21 +10,13 @@ export interface IInput {
 
 export interface IDeps {
   retrieveManyRepository: IRetrieveManyRepository
-  authorizationService: IAuthorizationService
 }
 
 export interface ISuccessData {
   data: {
     _id?: string
-    village_type?: string
-    village_code?: string
-    village_name?: string
-    district_code?: string
-    district_name?: string
-    city_code?: string
-    city_name?: string
-    province_code?: string
-    province_name?: string
+    name?: string
+    description?: string
     notes?: string
     is_archived?: boolean
     created_at?: Date
@@ -40,14 +31,15 @@ export interface ISuccessData {
 }
 
 /**
- * Use case: Retrieve Locations.
+ * Use case: Retrieve Problems.
  *
  * Responsibilities:
+ * - Check whether the user is authorized to perform this action
  * - Retrieve all data from the database.
  * - Optionally filter response fields using `query.fields`.
  * - Return a success response.
  */
-export class RetrieveManyUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
+export class RetrieveManyPublicUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
   async handle(input: IInput): Promise<IUseCaseOutputSuccess<ISuccessData> | IUseCaseOutputFailed> {
     // Retrieve all data from the database.
     const response = await this.deps.retrieveManyRepository.handle(input.query);
@@ -62,15 +54,8 @@ export class RetrieveManyUseCase extends BaseUseCase<IInput, IDeps, ISuccessData
       data: response.data.map(item => {
         const mapped = {
           _id: item._id,
-          village_type: item.village_type,
-          village_code: item.village_code,
-          village_name: item.village_name,
-          district_code: item.district_code,
-          district_name: item.district_name,
-          city_code: item.city_code,
-          city_name: item.city_name,
-          province_code: item.province_code,
-          province_name: item.province_name,
+          name: item.name,
+          description: item.description,
           notes: item.notes,
           is_archived: item.is_archived,
           created_at: item.created_at,

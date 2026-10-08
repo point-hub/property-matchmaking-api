@@ -1,14 +1,11 @@
 import type { IController, IControllerInput } from '@point-hub/papi';
 
-import { AuthorizationService } from '@/modules/_shared/services/authorization.service';
-
 import { RetrieveManyRepository } from '../repositories/retrieve-many.repository';
-import { RetrieveManyUseCase } from '../use-cases/retrieve-many.use-case';
+import { RetrieveManyPublicUseCase } from '../use-cases/retrieve-many-public.use-case';
 
-export const retrieveManyController: IController = async (controllerInput: IControllerInput) => {
+export const retrieveManyPublicController: IController = async (controllerInput: IControllerInput) => {
   let session;
   try {
-    const startedAt = performance.now();
     // Start database session for transaction
     session = controllerInput.dbConnection.startSession();
     session.startTransaction();
@@ -17,20 +14,14 @@ export const retrieveManyController: IController = async (controllerInput: ICont
     const retrieveManyRepository = new RetrieveManyRepository(controllerInput.dbConnection);
 
     // Initialize use case with dependencies
-    const retrieveManyUseCase = new RetrieveManyUseCase({
+    const retrieveManyPublicUseCase = new RetrieveManyPublicUseCase({
       retrieveManyRepository,
-      authorizationService: AuthorizationService,
     });
 
     // Execute business logic
-    const response = await retrieveManyUseCase.handle({
+    const response = await retrieveManyPublicUseCase.handle({
       query: controllerInput.req['query'],
     });
-
-
-    const elapsed = performance.now() - startedAt;
-
-    console.log(`[RetrieveManyRepository] ${elapsed.toFixed(2)} ms`);
 
     // Handle failed response
     if (response.status === 'failed') {
