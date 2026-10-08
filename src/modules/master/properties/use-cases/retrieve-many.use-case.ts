@@ -24,7 +24,7 @@ export interface ISuccessData {
     village?: string
     district?: string
     city?: string
-    pricelists?: string[]
+    pricelists?: { building_area: number, land_area: number, price: number }[]
     land_titles?: string[]
     facilities?: string[]
     promos?: string[]

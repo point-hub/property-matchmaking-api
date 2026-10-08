@@ -8,10 +8,10 @@ export interface IProperty {
   city?: string
   google_map_link?: string
   instagram?: string
-  pricelists?: []
+  pricelists?: { building_area: number, land_area: number, price: number }[]
   land_titles?: string[]
   facilities?: string[]
-  promos?: []
+  promos?: string[]
   developer_name?: string
   whatsapp?: string
   mou?: string

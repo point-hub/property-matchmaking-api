@@ -1,6 +1,5 @@
 import type { IController, IControllerInput } from '@point-hub/papi';
 
-import { AuthorizationService } from '@/modules/_shared/services/authorization.service';
 import { SchemaUniqueValidationService } from '@/modules/_shared/services/schema-validation.service';
 import { UniqueValidationService } from '@/modules/_shared/services/unique-validation.service';
 import { AblyService } from '@/modules/ably/services/ably.service';
@@ -23,23 +22,16 @@ export const createController: IController = async (controllerInput: IController
 
     // Initialize repositories and utilities
     const createRepository = new CreateRepository(controllerInput.dbConnection, { session });
-    const auditLogService = new AuditLogService(controllerInput.dbConnection, { session });
-    const codeGeneratorService = new CodeGeneratorService(controllerInput.dbConnection, { session });
     const uniqueValidationService = new UniqueValidationService(controllerInput.dbConnection, { session });
 
     // Initialize use case with dependencies
     const createUseCase = new CreateUseCase({
       createRepository,
-      ablyService: AblyService,
-      auditLogService,
-      authorizationService: AuthorizationService,
-      codeGeneratorService,
       uniqueValidationService,
     });
 
     // Execute business logic
     const response = await createUseCase.handle({
-      authUser: controllerInput.req['authUser'],
       userAgent: JSON.parse(
         Array.isArray(controllerInput.req.headers['client-user-agent'])
           ? controllerInput.req.headers['client-user-agent'][0]

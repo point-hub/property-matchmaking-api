@@ -1,7 +1,5 @@
 import type { IDatabase, IPipeline } from '@point-hub/papi';
 
-import type { IAuthUser } from '@/modules/master/users/interface';
-
 import { collectionName } from '../entity';
 import type { ICustomerPreference } from '../interface';
 
@@ -11,12 +9,24 @@ export interface IRetrieveRepository {
 }
 
 export interface IRetrieveOutput {
-  _id: string
-  name: string
-  notes: string
-  is_archived: boolean
-  created_at: Date
-  created_by: IAuthUser
+  _id: string;
+  locations: string[];
+  budget_min: number;
+  budget_max: number;
+  down_payment_min: number;
+  down_payment_max: number;
+  monthly_payment_min: number;
+  monthly_payment_max: number;
+  age: number;
+  marital_status: string;
+  dependents: number;
+  problems: string[];
+  promos: string[];
+  name: string;
+  whatsapp: number;
+  notes: string;
+  is_archived: boolean;
+  created_at: Date;
 }
 
 export class RetrieveRepository implements IRetrieveRepository {
@@ -29,7 +39,6 @@ export class RetrieveRepository implements IRetrieveRepository {
     const pipeline: IPipeline[] = [];
 
     pipeline.push(...this.pipeFilter(_id));
-    pipeline.push(...this.pipeJoinCreatedById());
     pipeline.push(...this.pipeProject());
 
     const response = await this.database.collection(collectionName).aggregate<IRetrieveOutput>(pipeline, {}, this.options);
@@ -39,11 +48,23 @@ export class RetrieveRepository implements IRetrieveRepository {
 
     return {
       _id: response.data[0]._id,
+      locations: response.data[0].locations,
+      budget_min: response.data[0].budget_min,
+      budget_max: response.data[0].budget_max,
+      down_payment_min: response.data[0].down_payment_min,
+      down_payment_max: response.data[0].down_payment_max,
+      monthly_payment_min: response.data[0].monthly_payment_min,
+      monthly_payment_max: response.data[0].monthly_payment_max,
+      age: response.data[0].age,
+      marital_status: response.data[0].marital_status,
+      dependents: response.data[0].dependents,
+      problems: response.data[0].problems,
+      promos: response.data[0].promos,
       name: response.data[0].name,
+      whatsapp: response.data[0].whatsapp,
       notes: response.data[0].notes,
       is_archived: response.data[0].is_archived,
       created_at: response.data[0].created_at,
-      created_by: response.data[0].created_by,
     };
   }
 
@@ -60,45 +81,28 @@ export class RetrieveRepository implements IRetrieveRepository {
     return [{ $match: { _id } }];
   }
 
-  private pipeJoinCreatedById(): IPipeline[] {
-    return [
-      {
-        $lookup: {
-          from: 'users',
-          let: { userId: '$created_by_id' },
-          pipeline: [
-            { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
-            {
-              $project: {
-                _id: 1,
-                name: 1,
-                username: 1,
-                email: 1,
-              },
-            },
-          ],
-          as: 'created_by',
-        },
-      },
-      {
-        $unwind: {
-          path: '$created_by',
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-    ];
-  }
-
   private pipeProject(): IPipeline[] {
     return [
       {
         $project: {
           _id: 1,
+          locations: 1,
+          budget_min: 1,
+          budget_max: 1,
+          down_payment_min: 1,
+          down_payment_max: 1,
+          monthly_payment_min: 1,
+          monthly_payment_max: 1,
+          age: 1,
+          marital_status: 1,
+          dependents: 1,
+          problems: 1,
+          promos: 1,
           name: 1,
+          whatsapp: 1,
           notes: 1,
           is_archived: 1,
           created_at: 1,
-          created_by: 1,
         },
       },
     ];

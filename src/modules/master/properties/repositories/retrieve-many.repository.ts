@@ -30,10 +30,15 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
     const pipeline: IPipeline[] = [];
 
     pipeline.push(...this.pipeQueryFilter(query));
+    if (this.hasPreferences(query)) {
+      pipeline.push(...this.pipeMatchmaking(query));
+    }
     pipeline.push(...this.pipeJoinCreatedById());
     pipeline.push(...this.pipeProject());
 
     const response = await this.database.collection(collectionName).aggregate<IRetrieveOutput>(pipeline, query, this.options);
+
+    console.log(response);
 
     return {
       data: response.data.map(item => {
@@ -68,6 +73,94 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
 
   async raw(query: IQuery): Promise<IRetrieveManyRawOutput> {
     return await this.database.collection(collectionName).retrieveMany<IProperty>(query, this.options);
+  }
+
+  private hasPreferences(query: IQuery): boolean {
+    return Object.keys(query).some(key => key.startsWith('preferences.'));
+  }
+
+  private getBudget(value: unknown): number | undefined {
+    if (value === undefined || value === null || value === '') {
+      return undefined;
+    }
+
+    const budget = Number(value);
+
+    return Number.isFinite(budget) ? budget : undefined;
+  }
+
+  private pipeMatchmaking(query: IQuery): IPipeline[] {
+    const locations = this.getPreferenceLocations(query);
+    const budgetMin = this.getBudget(query['preferences.budget_min']);
+    const budgetMax = this.getBudget(query['preferences.budget_max']);
+
+    const pipeline: IPipeline[] = [
+      {
+        $addFields: {
+          location_matched: locations.length > 0
+            ? { $in: ['$city', locations] }
+            : false,
+
+          price_matched: budgetMin !== undefined && budgetMax !== undefined
+            ? {
+              $gt: [
+                {
+                  $size: {
+                    $filter: {
+                      input: { $ifNull: ['$pricelists', []] },
+                      as: 'pricelist',
+                      cond: {
+                        $and: [
+                          { $gte: ['$$pricelist.price', budgetMin] },
+                          { $lte: ['$$pricelist.price', budgetMax] },
+                        ],
+                      },
+                    },
+                  },
+                },
+                0,
+              ],
+            }
+            : false,
+        },
+      },
+      {
+        $addFields: {
+          match_score: {
+            $add: [
+              { $cond: ['$location_matched', 1, 0] },
+              { $cond: ['$price_matched', 1, 0] },
+            ],
+          },
+        },
+      },
+      {
+        $match: {
+          match_score: { $gt: 0 },
+        },
+      },
+      {
+        $sort: {
+          match_score: -1,
+          _id: 1,
+        },
+      },
+    ];
+
+    return pipeline;
+  }
+
+  private getPreferenceLocations(query: IQuery): string[] {
+    return Object.entries(query)
+      .filter(([key]) => /^preferences\.locations\[\d+\]$/.test(key))
+      .sort(([keyA], [keyB]) => {
+        const indexA = Number(keyA.match(/\[(\d+)\]$/)?.[1] ?? 0);
+        const indexB = Number(keyB.match(/\[(\d+)\]$/)?.[1] ?? 0);
+
+        return indexA - indexB;
+      })
+      .map(([, value]) => String(value).trim())
+      .filter(Boolean);
   }
 
   private pipeQueryFilter(query: IQuery): IPipeline[] {

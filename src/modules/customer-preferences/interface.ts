@@ -1,6 +1,6 @@
 export interface ICustomerPreference {
   _id?: string
-  location?: string;
+  locations?: string[];
   budget_min?: number;
   budget_max?: number;
   down_payment_min?: number;
