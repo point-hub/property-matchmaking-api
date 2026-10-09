@@ -8,7 +8,6 @@ import { RetrieveManyUseCase } from '../use-cases/retrieve-many.use-case';
 export const retrieveManyController: IController = async (controllerInput: IControllerInput) => {
   let session;
   try {
-    const startedAt = performance.now();
     // Start database session for transaction
     session = controllerInput.dbConnection.startSession();
     session.startTransaction();
@@ -26,11 +25,6 @@ export const retrieveManyController: IController = async (controllerInput: ICont
     const response = await retrieveManyUseCase.handle({
       query: controllerInput.req['query'],
     });
-
-
-    const elapsed = performance.now() - startedAt;
-
-    console.log(`[RetrieveManyRepository] ${elapsed.toFixed(2)} ms`);
 
     // Handle failed response
     if (response.status === 'failed') {
