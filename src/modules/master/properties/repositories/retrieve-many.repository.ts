@@ -38,8 +38,6 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
 
     const response = await this.database.collection(collectionName).aggregate<IRetrieveOutput>(pipeline, query, this.options);
 
-    console.log(response);
-
     return {
       data: response.data.map(item => {
         return {
@@ -65,6 +63,7 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
           is_archived: item.is_archived,
           created_at: item.created_at,
           created_by: item.created_by,
+          match_score: item.match_score,
         };
       }),
       pagination: response.pagination,
@@ -268,6 +267,7 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
           is_archived: 1,
           created_at: 1,
           created_by: 1,
+          match_score: 1,
         },
       },
     ];
