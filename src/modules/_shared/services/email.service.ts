@@ -37,13 +37,13 @@ const initHandlebars = (() => {
 
     Handlebars.registerHelper('numberFormat', (value: unknown) => {
       if (value === undefined || value === null || value === '') {
-        return '-';
+        return '';
       }
 
       const number = Number(value);
 
       if (!Number.isFinite(number)) {
-        return '-';
+        return '';
       }
 
       return new Intl.NumberFormat('en-EN').format(number);

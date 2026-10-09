@@ -1,57 +1,172 @@
 {{>header}}
 
-<table role="presentation" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; border-collapse: separate; border-spacing: 0;">
   <tr>
-    <td style="padding: 40px; font-size: 16px; color: #2d3748;">
-      <p style="margin-top: 10px; line-height: 1.6;">
+    <td style="padding: 24px 20px; font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.6; color: #2d3748;">
+
+      <p style="margin: 10px 0 16px;">
         Halo Kawan Hunian,
       </p>
 
-      <p style="line-height: 1.6;">
+      <p style="margin: 0 0 20px;">
         Berikut adalah daftar rekomendasi properti yang sesuai dengan kriteria yang telah ditentukan oleh customer berikut:
       </p>
 
-      <table role="presentation" cellpadding="0" cellspacing="0" style="width: 100%; margin: 20px 0; background-color: #f7fafc; border-radius: 6px;">
+      <!-- Customer preference details -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width: 100%; margin: 20px 0; background-color: #f7fafc; border-radius: 6px; border-collapse: separate; border-spacing: 0;">
         <tr>
-          <td style="padding: 15px;">
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-              <strong>Nama:</strong> {{ preference.name }}<br>
-              <strong>No. WhatsApp:</strong> {{ preference.whatsapp }}<br>
-              <strong>Lokasi:</strong> {{#each preference.locations}} - {{this}}<br> {{else}} - {{/each}}
-              <strong>Anggaran:</strong> {{numberFormat preference.budget_min }} - {{numberFormat preference.budget_max }}<br>
+          <td style="padding: 16px;">
+
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width: 100%; border-collapse: collapse; table-layout: fixed;">
+
+              <tr>
+                <td width="38%" valign="top" style="width: 38%; padding: 6px 8px 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere;">
+                  <strong>Nama:</strong>
+                </td>
+                <td valign="top" style="padding: 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere; word-break: break-word;">
+                  {{preference.name}}
+                </td>
+              </tr>
+
+              <tr>
+                <td width="38%" valign="top" style="width: 38%; padding: 6px 8px 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere;">
+                  <strong>No. WhatsApp:</strong>
+                </td>
+                <td valign="top" style="padding: 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere; word-break: break-word;">
+                  {{preference.whatsapp}}
+                </td>
+              </tr>
+
+              <tr>
+                <td width="38%" valign="top" style="width: 38%; padding: 6px 8px 6px 0; font-size: 14px; vertical-align: top;">
+                  <strong>Lokasi:</strong>
+                </td>
+                <td valign="top" style="padding: 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere; word-break: break-word;">
+                  {{#each preference.locations}}
+                    {{#if @index}}<br>{{/if}}- {{this}}
+                  {{else}}
+                    -
+                  {{/each}}
+                </td>
+              </tr>
+
+              <tr>
+                <td width="38%" valign="top" style="width: 38%; padding: 6px 8px 6px 0; font-size: 14px; vertical-align: top;">
+                  <strong>Anggaran:</strong>
+                </td>
+                <td valign="top" style="padding: 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere; word-break: break-word;">
+                  Rp {{numberFormat preference.budget_min}} - Rp {{numberFormat preference.budget_max}}
+                </td>
+              </tr>
+
               {{#unless preference.is_cash}}
-              <strong>Uang Muka (DP):</strong> {{numberFormat preference.down_payment_min }} - {{numberFormat preference.down_payment_max }}<br>
-              <strong>Cicilan Bulanan:</strong> {{numberFormat preference.monthly_payment_min }} - {{numberFormat preference.monthly_payment_max }}<br>
-              <strong>Usia:</strong> {{ preference.age }}<br>
-              <strong>Status Pernikahan:</strong> {{ preference.marital_status }}<br>
-              <strong>Jumlah Tanggungan:</strong> {{ preference.dependents }}<br>
+                <tr>
+                  <td width="38%" valign="top" style="width: 38%; padding: 6px 8px 6px 0; font-size: 14px; vertical-align: top;">
+                    <strong>Uang Muka (DP):</strong>
+                  </td>
+                  <td valign="top" style="padding: 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere; word-break: break-word;">
+                    Rp {{numberFormat preference.down_payment_min}} - Rp {{numberFormat preference.down_payment_max}}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td width="38%" valign="top" style="width: 38%; padding: 6px 8px 6px 0; font-size: 14px; vertical-align: top;">
+                    <strong>Cicilan Bulanan:</strong>
+                  </td>
+                  <td valign="top" style="padding: 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere; word-break: break-word;">
+                    Rp {{numberFormat preference.monthly_payment_min}} - Rp {{numberFormat preference.monthly_payment_max}}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td width="38%" valign="top" style="width: 38%; padding: 6px 8px 6px 0; font-size: 14px; vertical-align: top;">
+                    <strong>Usia:</strong>
+                  </td>
+                  <td valign="top" style="padding: 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere;">
+                    {{preference.age}}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td width="38%" valign="top" style="width: 38%; padding: 6px 8px 6px 0; font-size: 14px; vertical-align: top;">
+                    <strong>Status Pernikahan:</strong>
+                  </td>
+                  <td valign="top" style="padding: 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere; word-break: break-word;">
+                    {{preference.marital_status}}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td width="38%" valign="top" style="width: 38%; padding: 6px 8px 6px 0; font-size: 14px; vertical-align: top;">
+                    <strong>Jumlah Tanggungan:</strong>
+                  </td>
+                  <td valign="top" style="padding: 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere;">
+                    {{preference.dependents}}
+                  </td>
+                </tr>
               {{/unless}}
-              <strong>Kendala Pembelian:</strong> {{#each preference.problems}} - {{this}}<br> {{else}} - {{/each}} 
-              <strong>Promosi yang dibutuhkan:</strong> {{#each preference.promos}} - {{this}}<br> {{else}} - {{/each}}
-            </div>
+
+              <tr>
+                <td width="38%" valign="top" style="width: 38%; padding: 6px 8px 6px 0; font-size: 14px; vertical-align: top;">
+                  <strong>Kendala Pembelian:</strong>
+                </td>
+                <td valign="top" style="padding: 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere; word-break: break-word;">
+                  {{#each preference.problems}}
+                    {{#if @index}}<br>{{/if}}- {{this}}
+                  {{else}}
+                    -
+                  {{/each}}
+                </td>
+              </tr>
+
+              <tr>
+                <td width="38%" valign="top" style="width: 38%; padding: 6px 8px 6px 0; font-size: 14px; vertical-align: top;">
+                  <strong>Promosi yang dibutuhkan:</strong>
+                </td>
+                <td valign="top" style="padding: 6px 0; font-size: 14px; vertical-align: top; overflow-wrap: anywhere; word-break: break-word;">
+                  {{#each preference.promos}}
+                    {{#if @index}}<br>{{/if}}- {{this}}
+                  {{else}}
+                    -
+                  {{/each}}
+                </td>
+              </tr>
+
+            </table>
           </td>
         </tr>
       </table>
 
-      <p style="line-height: 1.6;">
+      <p style="margin: 24px 0 0; line-height: 1.6;">
         Silakan klik tombol di bawah untuk melihat daftar dan detail properti yang direkomendasikan.
       </p>
 
-      <p style="margin-top: 25px; text-align: center;">
-        <a href="{{domain}}/property-recommendations?id={{id}}" target="_blank" style="text-decoration: none; display: inline-block; padding: 12px 24px; background-color: #3182ce; color: #ffffff; border-radius: 5px; text-align: center;">
-          Lihat Rekomendasi Properti
+      <!-- Recommendation button -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 24px auto;">
+        <tr>
+          <td align="center" bgcolor="#3182ce" style="border-radius: 5px;">
+            <a href="{{domain}}/property-recommendations?id={{id}}" target="_blank" style="display: inline-block; padding: 12px 24px; font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: bold; line-height: 1.4; color: #ffffff; text-decoration: none; border-radius: 5px;">
+              Lihat Rekomendasi Properti
+            </a>
+          </td>
+        </tr>
+      </table>
+
+      <p style="margin: 24px 0 8px; line-height: 1.6;">
+        Atau, berikan tautan berikut kepada customer Anda:
+      </p>
+
+      <p style="margin: 0 0 24px; line-height: 1.6; overflow-wrap: anywhere; word-break: break-word;">
+        <a href="{{domain}}/property-recommendations?id={{id}}" target="_blank" style="color: #3182ce; text-decoration: underline;">
+          {{domain}}/property-recommendations?id={{id}}
         </a>
       </p>
 
-      <br>
-
-      atau berikan link ini ke customer anda: <br><br> <a href="{{domain}}/property-recommendations?id={{id}}" target="_blank" style="color: #3182ce;">{{domain}}/property-recommendations?id={{id}}</a>
-
-      <p style="margin-top: 25px; line-height: 1.6;">
+      <p style="margin: 24px 0 0; line-height: 1.6;">
         Terima kasih.
       </p>
-    </td>
 
+    </td>
   </tr>
 </table>
 
