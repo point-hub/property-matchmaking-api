@@ -18,12 +18,14 @@
               <strong>Nama:</strong> {{ preference.name }}<br>
               <strong>No. WhatsApp:</strong> {{ preference.whatsapp }}<br>
               <strong>Lokasi:</strong> {{#each preference.locations}} - {{this}}<br> {{else}} - {{/each}}
-              <strong>Anggaran:</strong> {{ preference.budget_min }} - {{ preference.budget_max }}<br>
-              <strong>Uang Muka (DP):</strong> {{ preference.down_payment_min }} - {{ preference.down_payment_max }}<br>
-              <strong>Cicilan Bulanan:</strong> {{ preference.monthly_payment_min }} - {{ preference.monthly_payment_max }}<br>
+              <strong>Anggaran:</strong> {{numberFormat preference.budget_min }} - {{numberFormat preference.budget_max }}<br>
+              {{#unless preference.is_cash}}
+              <strong>Uang Muka (DP):</strong> {{numberFormat preference.down_payment_min }} - {{numberFormat preference.down_payment_max }}<br>
+              <strong>Cicilan Bulanan:</strong> {{numberFormat preference.monthly_payment_min }} - {{numberFormat preference.monthly_payment_max }}<br>
               <strong>Usia:</strong> {{ preference.age }}<br>
               <strong>Status Pernikahan:</strong> {{ preference.marital_status }}<br>
               <strong>Jumlah Tanggungan:</strong> {{ preference.dependents }}<br>
+              {{/unless}}
               <strong>Kendala Pembelian:</strong> {{#each preference.problems}} - {{this}}<br> {{else}} - {{/each}} 
               <strong>Promosi yang dibutuhkan:</strong> {{#each preference.promos}} - {{this}}<br> {{else}} - {{/each}}
             </div>

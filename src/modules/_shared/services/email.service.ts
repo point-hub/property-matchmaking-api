@@ -3,10 +3,10 @@ import { copyrightYear, Handlebars } from '@point-hub/express-utils';
 import emailServiceConfig from '@/config/email';
 
 export interface IData {
-  to: string
-  subject: string
-  template: string
-  context: Record<string, unknown>
+  to: string;
+  subject: string;
+  template: string;
+  context: Record<string, unknown>;
 }
 
 export interface IEmailService {
@@ -34,6 +34,20 @@ const initHandlebars = (() => {
     // Helpers
     Handlebars.registerHelper('appName', () => 'Kawan Hunian');
     Handlebars.registerHelper('copyrightYear', copyrightYear);
+
+    Handlebars.registerHelper('numberFormat', (value: unknown) => {
+      if (value === undefined || value === null || value === '') {
+        return '-';
+      }
+
+      const number = Number(value);
+
+      if (!Number.isFinite(number)) {
+        return '-';
+      }
+
+      return new Intl.NumberFormat('en-EN').format(number);
+    });
   };
 })();
 

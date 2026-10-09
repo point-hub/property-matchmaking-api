@@ -79,6 +79,7 @@ export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     const createResponse = await this.deps.createRepository.handle(customerPreferenceEntity.data);
 
     // Send the email verification message to the user.
+    console.log(customerPreferenceEntity.data);
     await this.deps.emailService.send(
       {
         to: emailConfig.admin,
