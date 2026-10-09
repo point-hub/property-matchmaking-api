@@ -3,6 +3,7 @@ export interface ICustomerPreference {
   locations?: string[];
   budget_min?: number;
   budget_max?: number;
+  is_cash?: boolean;
   down_payment_min?: number;
   down_payment_max?: number;
   monthly_payment_min?: number;

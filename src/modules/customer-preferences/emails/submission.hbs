@@ -1,0 +1,56 @@
+{{>header}}
+
+<table role="presentation" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+  <tr>
+    <td style="padding: 40px; font-size: 16px; color: #2d3748;">
+      <p style="margin-top: 10px; line-height: 1.6;">
+        Halo Kawan Hunian,
+      </p>
+
+      <p style="line-height: 1.6;">
+        Berikut adalah daftar rekomendasi properti yang sesuai dengan kriteria yang telah ditentukan oleh customer berikut:
+      </p>
+
+      <table role="presentation" cellpadding="0" cellspacing="0" style="width: 100%; margin: 20px 0; background-color: #f7fafc; border-radius: 6px;">
+        <tr>
+          <td style="padding: 15px;">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <strong>Nama:</strong> {{ preference.name }}<br>
+              <strong>No. WhatsApp:</strong> {{ preference.whatsapp }}<br>
+              <strong>Lokasi:</strong> {{#each preference.locations}} - {{this}}<br> {{else}} - {{/each}}
+              <strong>Anggaran:</strong> {{ preference.budget_min }} - {{ preference.budget_max }}<br>
+              <strong>Uang Muka (DP):</strong> {{ preference.down_payment_min }} - {{ preference.down_payment_max }}<br>
+              <strong>Cicilan Bulanan:</strong> {{ preference.monthly_payment_min }} - {{ preference.monthly_payment_max }}<br>
+              <strong>Usia:</strong> {{ preference.age }}<br>
+              <strong>Status Pernikahan:</strong> {{ preference.marital_status }}<br>
+              <strong>Jumlah Tanggungan:</strong> {{ preference.dependents }}<br>
+              <strong>Kendala Pembelian:</strong> {{#each preference.problems}} - {{this}}<br> {{else}} - {{/each}} 
+              <strong>Promosi yang dibutuhkan:</strong> {{#each preference.promos}} - {{this}}<br> {{else}} - {{/each}}
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <p style="line-height: 1.6;">
+        Silakan klik tombol di bawah untuk melihat daftar dan detail properti yang direkomendasikan.
+      </p>
+
+      <p style="margin-top: 25px; text-align: center;">
+        <a href="{{domain}}/property-recommendations?id={{id}}" target="_blank" style="text-decoration: none; display: inline-block; padding: 12px 24px; background-color: #3182ce; color: #ffffff; border-radius: 5px; text-align: center;">
+          Lihat Rekomendasi Properti
+        </a>
+      </p>
+
+      <br>
+
+      atau berikan link ini ke customer anda: <br><br> <a href="{{domain}}/property-recommendations?id={{id}}" target="_blank" style="color: #3182ce;">{{domain}}/property-recommendations?id={{id}}</a>
+
+      <p style="margin-top: 25px; line-height: 1.6;">
+        Terima kasih.
+      </p>
+    </td>
+
+  </tr>
+</table>
+
+{{>footer}}

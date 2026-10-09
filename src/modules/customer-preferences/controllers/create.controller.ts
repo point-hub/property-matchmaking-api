@@ -1,10 +1,8 @@
 import type { IController, IControllerInput } from '@point-hub/papi';
 
+import { EmailService } from '@/modules/_shared/services/email.service';
 import { SchemaUniqueValidationService } from '@/modules/_shared/services/schema-validation.service';
 import { UniqueValidationService } from '@/modules/_shared/services/unique-validation.service';
-import { AblyService } from '@/modules/ably/services/ably.service';
-import { AuditLogService } from '@/modules/audit-logs/services/audit-log.service';
-import { CodeGeneratorService } from '@/modules/counters/services/code-generator.service';
 
 import { CreateRepository } from '../repositories/create.repository';
 import { createRules } from '../rules/create.rules';
@@ -27,6 +25,7 @@ export const createController: IController = async (controllerInput: IController
     // Initialize use case with dependencies
     const createUseCase = new CreateUseCase({
       createRepository,
+      emailService: EmailService,
       uniqueValidationService,
     });
 

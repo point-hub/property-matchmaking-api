@@ -1,5 +1,8 @@
 import { BaseUseCase, type IUseCaseOutputFailed, type IUseCaseOutputSuccess } from '@point-hub/papi';
 
+import apiConfig from '@/config/api';
+import emailConfig from '@/config/email';
+import type { IEmailService } from '@/modules/_shared/services/email.service';
 import type { IUniqueValidationService } from '@/modules/_shared/services/unique-validation.service';
 import type { IUserAgent } from '@/modules/_shared/types/user-agent.type';
 
@@ -13,6 +16,7 @@ export interface IInput {
     locations: string[];
     budget_min: number;
     budget_max: number;
+    is_cash: boolean;
     down_payment_min: number;
     down_payment_max: number;
     monthly_payment_min: number;
@@ -30,6 +34,7 @@ export interface IInput {
 
 export interface IDeps {
   createRepository: ICreateRepository
+  emailService: IEmailService
   uniqueValidationService: IUniqueValidationService
 }
 
@@ -53,6 +58,7 @@ export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
       locations: input.data.locations,
       budget_min: input.data.budget_min,
       budget_max: input.data.budget_max,
+      is_cash: input.data.is_cash,
       down_payment_min: input.data.down_payment_min,
       down_payment_max: input.data.down_payment_max,
       monthly_payment_min: input.data.monthly_payment_min,
@@ -71,6 +77,20 @@ export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
 
     // Save the data to the database.
     const createResponse = await this.deps.createRepository.handle(customerPreferenceEntity.data);
+
+    // Send the email verification message to the user.
+    await this.deps.emailService.send(
+      {
+        to: emailConfig.admin,
+        subject: `Submission from ${customerPreferenceEntity.data.name} (${customerPreferenceEntity.data.whatsapp})`,
+        template: 'modules/customer-preferences/emails/submission.hbs',
+        context: {
+          domain: apiConfig.clientUrl,
+          id: createResponse.inserted_id,
+          preference: customerPreferenceEntity.data,
+        },
+      },
+    );
 
     // Return a success response.
     return this.success({
