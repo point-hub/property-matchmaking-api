@@ -79,11 +79,10 @@ export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     const createResponse = await this.deps.createRepository.handle(customerPreferenceEntity.data);
 
     // Send the email verification message to the user.
-    console.log(customerPreferenceEntity.data);
     await this.deps.emailService.send(
       {
         to: emailConfig.admin,
-        subject: `Submission from ${customerPreferenceEntity.data.name} (${customerPreferenceEntity.data.whatsapp})`,
+        subject: `Property Recommendation Request from ${customerPreferenceEntity.data.name} (${customerPreferenceEntity.data.whatsapp}) -- ${customerPreferenceEntity.data.locations?.join(', ')}`,
         template: 'modules/customer-preferences/emails/submission.hbs',
         context: {
           domain: apiConfig.clientUrl,
