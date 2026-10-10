@@ -20,7 +20,7 @@ export interface IRetrieveOutput {
   city: string
   google_map_link: string
   instagram: string
-  pricelists: string[]
+  pricelists: { building_area: number, land_area: number, price: number }[]
   land_titles: string[]
   facilities: string[]
   promos: string[]

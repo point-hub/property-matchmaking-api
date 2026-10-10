@@ -4,4 +4,5 @@ export { deleteController } from './delete.controller';
 export { restoreController } from './restore.controller';
 export { retrieveController } from './retrieve.controller';
 export { retrieveManyController } from './retrieve-many.controller';
+export { retrieveRecommendationsController } from './retrieve-recommendations.controller';
 export { updateController } from './update.controller';

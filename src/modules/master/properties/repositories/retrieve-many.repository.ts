@@ -63,7 +63,6 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
           is_archived: item.is_archived,
           created_at: item.created_at,
           created_by: item.created_by,
-          match_score: item.match_score,
         };
       }),
       pagination: response.pagination,
