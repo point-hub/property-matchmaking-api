@@ -73,7 +73,17 @@ export class RetrieveManyRepository implements IRetrieveManyRepository {
     BaseMongoDBQueryFilters.addRegexFilter(filters, 'notes', query?.['search.notes']);
 
     // Filter boolean
-    BaseMongoDBQueryFilters.addBooleanFilter(filters, 'is_archived', query?.['search.is_archived']);
+    if (query?.['search.is_archived'] === 'false' || query?.['search.is_archived'] === false) {
+      filters.push({
+        $or: [
+          { is_archived: false },
+          { is_archived: { $exists: false } },
+          { is_archived: null },
+        ],
+      });
+    } else {
+      BaseMongoDBQueryFilters.addBooleanFilter(filters, 'is_archived', query?.['search.is_archived']);
+    }
 
     return filters.length > 0 ? [{ $match: { $and: filters } }] : [];
   }
