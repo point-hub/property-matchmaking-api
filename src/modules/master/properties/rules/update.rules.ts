@@ -4,6 +4,14 @@
  */
 
 export const updateRules = {
+  code: ['required', 'string'],
   name: ['required', 'string'],
+  address: ['required', 'string'],
+  village: ['required', 'string'],
+  district: ['required', 'string'],
+  city: ['required', 'string'],
+  developer_name: ['required', 'string'],
+  whatsapp: ['required', 'string'],
+  pricelists: ['required'],
   notes: ['string'],
 };
