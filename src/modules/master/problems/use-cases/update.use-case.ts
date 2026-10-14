@@ -78,14 +78,14 @@ export class UpdateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     });
 
     // Validate uniqueness: single unique name field.
-    const uniqueNameErrors = await this.deps.uniqueValidationService.validate(
-      collectionName,
-      { name: input.data?.name },
-      { except: { _id: input.filter._id } },
-    );
-    if (uniqueNameErrors) {
-      return this.fail({ code: 422, message: 'Validation failed due to duplicate values.', errors: uniqueNameErrors });
-    }
+    // const uniqueNameErrors = await this.deps.uniqueValidationService.validate(
+    //   collectionName,
+    //   { name: input.data?.name },
+    //   { except: { _id: input.filter._id } },
+    // );
+    // if (uniqueNameErrors) {
+    //   return this.fail({ code: 422, message: 'Validation failed due to duplicate values.', errors: uniqueNameErrors });
+    // }
 
     // Reject update when no fields have changed
     const changes = this.deps.auditLogService.buildChanges(

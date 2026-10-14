@@ -96,10 +96,10 @@ export class CreateUseCase extends BaseUseCase<IInput, IDeps, ISuccessData> {
     });
 
     // Validate uniqueness: single unique name field.
-    const uniqueNameErrors = await this.deps.uniqueValidationService.validate(collectionName, { name: input.data.name });
-    if (uniqueNameErrors) {
-      return this.fail({ code: 422, message: 'Validation failed due to duplicate values.', errors: uniqueNameErrors });
-    }
+    // const uniqueNameErrors = await this.deps.uniqueValidationService.validate(collectionName, { name: input.data.name });
+    // if (uniqueNameErrors) {
+    //   return this.fail({ code: 422, message: 'Validation failed due to duplicate values.', errors: uniqueNameErrors });
+    // }
 
     // Save the data to the database.
     const createResponse = await this.deps.createRepository.handle(propertyEntity.data);
